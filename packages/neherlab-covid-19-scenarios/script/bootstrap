@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -e
+
+: ${BASEL_REPO:=../../../covid19_scenarios}
+
+if [ ! -d $BASEL_REPO ]; then
+cat <<MESSAGE
+Set the 'BASEL_REPO' to the path to the Basel model repository,
+or check out the repository to ../../../covid19_scenarios
+For now we recommend you check out this fork and branch:
+https://github.com/adityasharad/covid19_scenarios/tree/cli-entry-point
+MESSAGE
+exit 1
+fi
+
+# Build the Basel repo and create an executable
+rm -rf .local/bin
+mkdir -p .local/bin
+CURRENT=$PWD
+cd $BASEL_REPO
+echo "Compiling the Basel model CLI entry point"
+yarn schema:clean
+yarn schema:totypes
+tsc --esModuleInterop --resolveJsonModule src/algorithms/cli.ts || cd $CURRENT
+echo "Compiled the Basel model CLI entry point"
+BASEL_REPO_PATH="$(readlink -f $BASEL_REPO)"
+LOCAL_EXEC_PATH=.local/bin/run-basel-model
+echo -e "#!/bin/bash\n\nnode $BASEL_REPO_PATH/src/algorithms/cli.js \$@" > $LOCAL_EXEC_PATH
+chmod +x $LOCAL_EXEC_PATH
+echo "Wrote a local executable script to $LOCAL_EXEC_PATH"
+
+# Copy Basel data for local runs
+mkdir -p data/basel
+cp $BASEL_REPO/src/assets/data/scenarios/scenarios.json data/

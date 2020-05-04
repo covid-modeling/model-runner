@@ -1,0 +1,41 @@
+version: "3.7"
+services:
+  test:
+    build:
+      context: ../..
+      dockerfile: ./packages/mrc-ide-covidsim/Dockerfile
+      target: test
+      args:
+        - COVIDSIM_VER=${COVIDSIM_VER}
+
+  release:
+    build:
+      context: ../..
+      dockerfile: ./packages/mrc-ide-covidsim/Dockerfile
+      target: release
+      args:
+        - COVIDSIM_VER=${COVIDSIM_VER}
+    # This is set this way to make things easier in the Actions workflows.
+    image: image
+
+  run-model:
+    build:
+      context: ../..
+      dockerfile: ./packages/mrc-ide-covidsim/Dockerfile
+      target: release
+      args:
+        - COVIDSIM_VER=${COVIDSIM_VER}
+    volumes:
+      - ./test/test-job.json:/data/input/inputFile.json:ro
+      - ./output:/data/output:rw
+      - ./log:/data/log:rw
+    command: /data/input/inputFile.json
+
+  remote-image:
+    image: docker.pkg.github.com/${GITHUB_REPO:-covid-modeling/model-runner}/mrc-ide-covidsim-connector:master
+    tty: true
+    volumes:
+      - ./test/test-job.json:/data/input/inputFile.json:ro
+      - ./output:/data/output:rw
+      - ./log:/data/log:rw
+    command: /data/input/inputFile.json

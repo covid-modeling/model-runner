@@ -1,0 +1,17 @@
+#!/bin/bash
+
+SCRIPTDIR=$(dirname "$0")
+
+if [[ -z "$WOLFRAM_USER" ]]; then
+  echo "Environment variable WOLFRAM_USER is missing. Set it to a valid Wolfram ID."
+  exit 1
+fi
+
+if [[ -z "$WOLFRAM_PASSWORD" ]]; then
+  echo "Environment variable WOLFRAM_PASSWORD is missing. Set it to a valid Wolfram account password."
+  exit 1
+fi
+
+/usr/bin/wolframscript -authenticate ${WOLFRAM_USER} ${WOLFRAM_PASSWORD}
+/usr/bin/wolframscript -activate
+/usr/bin/wolframscript -file "${SCRIPTDIR}/../connector.wl" "$@"

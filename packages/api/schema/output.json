@@ -1,0 +1,296 @@
+{
+  "$ref": "#/definitions/ModelOutput",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ISODate": {
+      "type": "string"
+    },
+    "Intensity": {
+      "enum": [
+        "mild",
+        "moderate",
+        "aggressive"
+      ],
+      "type": "string"
+    },
+    "InterventionPeriod": {
+      "additionalProperties": false,
+      "properties": {
+        "caseIsolation": {
+          "$ref": "#/definitions/Intensity",
+          "description": "The level to which individuals with symptoms self-isolate."
+        },
+        "reductionPopulationContact": {
+          "description": "The estimated reduction in population contact resulting from\nall of the above interventions. Some models require this generalized\nparameter instead of the individual interventions.",
+          "type": "number"
+        },
+        "schoolClosure": {
+          "$ref": "#/definitions/Intensity",
+          "description": "The level of school closure in the region."
+        },
+        "socialDistancing": {
+          "$ref": "#/definitions/Intensity",
+          "description": "The level of social distancing in the region."
+        },
+        "startDate": {
+          "$ref": "#/definitions/ISODate",
+          "description": "An ISO-8601 string encoding the date that these interventions begin."
+        },
+        "voluntaryHomeQuarantine": {
+          "$ref": "#/definitions/Intensity",
+          "description": "The level to which entire households self-isolate when one member\nof the household has symptoms."
+        }
+      },
+      "required": [
+        "startDate",
+        "reductionPopulationContact"
+      ],
+      "type": "object"
+    },
+    "Model": {
+      "additionalProperties": false,
+      "properties": {
+        "imageURL": {
+          "type": "string"
+        },
+        "slug": {
+          "$ref": "#/definitions/ModelSlug"
+        }
+      },
+      "required": [
+        "slug",
+        "imageURL"
+      ],
+      "type": "object"
+    },
+    "ModelInput": {
+      "additionalProperties": false,
+      "description": "A generalized description of the input to an epidemiological model.",
+      "properties": {
+        "model": {
+          "$ref": "#/definitions/Model"
+        },
+        "parameters": {
+          "$ref": "#/definitions/ModelParameters"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "model",
+        "region",
+        "parameters"
+      ],
+      "type": "object"
+    },
+    "ModelOutput": {
+      "additionalProperties": false,
+      "properties": {
+        "aggregate": {
+          "additionalProperties": false,
+          "properties": {
+            "metrics": {
+              "$ref": "#/definitions/SeverityMetrics"
+            }
+          },
+          "required": [
+            "metrics"
+          ],
+          "type": "object"
+        },
+        "metadata": {
+          "$ref": "#/definitions/ModelInput"
+        },
+        "time": {
+          "additionalProperties": false,
+          "properties": {
+            "extent": {
+              "description": "The minimum and maximum timestamps for the series of reported metrics.\nEach value is a number of days after `t0`.",
+              "items": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "t0": {
+              "description": "An ISO-8601 string encoding the date that each timeseries begins.",
+              "type": "string"
+            },
+            "timestamps": {
+              "description": "The timestamps that correspond to every series of metrics.\nEach value is a number of days after `t0`.",
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "t0",
+            "timestamps",
+            "extent"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "metadata",
+        "time",
+        "aggregate"
+      ],
+      "type": "object"
+    },
+    "ModelParameters": {
+      "additionalProperties": false,
+      "properties": {
+        "calibrationCaseCount": {
+          "description": "The total number of confirmed cases in the region before the calibration date.",
+          "type": "number"
+        },
+        "calibrationDate": {
+          "$ref": "#/definitions/ISODate",
+          "description": "An ISO-8601 string encoding the date of the most recent case data in the region."
+        },
+        "calibrationDeathCount": {
+          "description": "The total number of deaths in the region before the calibration date.",
+          "type": "number"
+        },
+        "interventionPeriods": {
+          "description": "A list of time periods, each with a different set of interventions.",
+          "items": {
+            "$ref": "#/definitions/InterventionPeriod"
+          },
+          "type": "array"
+        },
+        "r0": {
+          "description": "The assumed reproduction number for the virus. If this is null, then each\nmodel will use its own default value.",
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "calibrationDate",
+        "calibrationCaseCount",
+        "calibrationDeathCount",
+        "r0",
+        "interventionPeriods"
+      ],
+      "type": "object"
+    },
+    "ModelSlug": {
+      "enum": [
+        "mrc-ide-covid-sim",
+        "basel",
+        "mc19"
+      ],
+      "type": "string"
+    },
+    "SeverityMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "CritRecov": {
+          "description": "Current number of critical cases on this day who are well enough to leave the ICU but still need a hospital bed",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "Critical": {
+          "description": "Current number of critical cases on this day (assume represents ICU demand)",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "ILI": {
+          "description": "Current number of influenza-like illness cases on this day (assume represents GP demand)",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "Mild": {
+          "description": "Current number of mild cases on this day",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "SARI": {
+          "description": "Current number of Severe Acute Respiratory Illness cases on this day (assume represents hospital demand)",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "cumCritRecov": {
+          "description": "Total number of patients recovered from critical cases since the beginning of the epidemic",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "cumCritical": {
+          "description": "Total number of critical cases since the beginning of the epidemic",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "cumILI": {
+          "description": "Total number of influence-like illnesses since the beginning of the epidemic",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "cumMild": {
+          "description": "Total number of mild cases since the beginning of the epidemic",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "cumSARI": {
+          "description": "Total number of severe acute respiratory illnesses since the beginning of the epidemic",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "incDeath": {
+          "description": "Number of deaths occurring on this day",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "Mild",
+        "ILI",
+        "SARI",
+        "Critical",
+        "CritRecov",
+        "incDeath",
+        "cumMild",
+        "cumILI",
+        "cumSARI",
+        "cumCritical",
+        "cumCritRecov"
+      ],
+      "type": "object"
+    }
+  }
+}

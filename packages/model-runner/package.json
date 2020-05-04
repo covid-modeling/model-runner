@@ -1,0 +1,41 @@
+{
+  "name": "@covid-modeling/model-runner",
+  "version": "0.8.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "PATH=$PATH:../../node_modules/.bin && mocha --debug-brk --ui tdd -r ts-node/register test/unit/*-test.ts",
+    "integration-test": "PATH=$PATH:../../node_modules/.bin && mocha --debug-brk --ui tdd -r ts-node/register test/integration/*-test.ts",
+    "start": "PATH=$PATH:../../node_modules/.bin && node bin/run-model",
+    "build": "PATH=$PATH:../../node_modules/.bin && tsc -p .",
+    "watch": "PATH=$PATH:../../node_modules/.bin && tsc -p . --watch",
+    "check": "PATH=$PATH:../../node_modules/.bin && gts check",
+    "clean": "PATH=$PATH:../../node_modules/.bin && gts clean",
+    "compile": "PATH=$PATH:../../node_modules/.bin && tsc -p .",
+    "fix": "PATH=$PATH:../../node_modules/.bin && gts fix",
+    "pretest": "PATH=$PATH:../../node_modules/.bin && npm run compile",
+    "posttest": "npm run check"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@azure/identity": "^1.1.0-preview1",
+    "@azure/storage-blob": "^12.1.1",
+    "@covid-modeling/api": "0.8.*",
+    "archiver": "^4.0.1",
+    "d3": "^5.15.0",
+    "dockerode": "^3.2.0",
+    "fast-glob": "^3.2.2",
+    "glob": "^7.1.6",
+    "jsen": "^0.6.6",
+    "luxon": "^1.23.0",
+    "mkdirp": "^1.0.3",
+    "pino": "^6.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/covid-modeling/model-runner.git",
+    "directory": "packages/model-runner"
+  },
+  "bugs": {
+    "url": "https://github.com/covid-modeling/model-runner/issues"
+  }
+}

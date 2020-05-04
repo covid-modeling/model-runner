@@ -1,0 +1,48 @@
+name: MC19 Connector-Publish Docker Images for Tags/Releases
+on:
+  push:
+    # Publish `modelingcovid-covidmodel/v1.2.3` tags as `modelingcovid-covidmodel-connector` releases.
+    tags:
+      - 'modelingcovid-covidmodel/v*'
+
+env:
+  PACKAGE_NAME: modelingcovid-covidmodel
+  IMAGE_NAME: modelingcovid-covidmodel-connector
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/modelingcovid-covidmodel
+
+    strategy:
+      fail-fast: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Log into registry for Docker images
+        run: echo "${{ secrets.GITHUB_PAT }}" | docker login docker.pkg.github.com -u ${{ secrets.GITHUB_PAT_USER }} --password-stdin
+
+      - name: Build image
+        run: docker-compose build release
+
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Push image (Local)
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/$PACKAGE_NAME"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # Always tag with git sha or version tag
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag image $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION

@@ -1,0 +1,35 @@
+{
+  "name": "@covid-modeling/mrc-ide-covidsim",
+  "version": "0.9.1",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "PATH=$PATH:../../node_modules/.bin && mocha --debug-brk --ui tdd -r ts-node/register test/unit/*-test.ts",
+    "integration-test": "PATH=$PATH:../../node_modules/.bin && mocha --debug-brk --ui tdd -r ts-node/register test/integration/*-test.ts",
+    "start": "node bin/run-model",
+    "build": "PATH=$PATH:../../node_modules/.bin && tsc -p .",
+    "watch": "PATH=$PATH:../../node_modules/.bin && tsc -p . --watch",
+    "check": "PATH=$PATH:../../node_modules/.bin && gts check",
+    "clean": "PATH=$PATH:../../node_modules/.bin && gts clean",
+    "compile": "PATH=$PATH:../../node_modules/.bin && tsc -p .",
+    "fix": "PATH=$PATH:../../node_modules/.bin && gts fix",
+    "pretest": "npm run compile",
+    "posttest": "npm run check"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@covid-modeling/api": "0.8.*",
+    "d3": "^5.15.0",
+    "jsen": "^0.6.6",
+    "luxon": "^1.23.0",
+    "mkdirp": "^1.0.3",
+    "pino": "^6.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/covid-modeling/model-runner.git",
+    "directory": "packages/mrc-ide-covidsim"
+  },
+  "bugs": {
+    "url": "https://github.com/covid-modeling/model-runner/issues"
+  }
+}

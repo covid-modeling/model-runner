@@ -1,0 +1,30 @@
+{
+  "name": "@covid-modeling/api",
+  "version": "0.8.0",
+  "main": "dist/src/index",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "build": "npm run generate-schema && npm run compile",
+    "generate-schema": "PATH=$PATH:../../node_modules/.bin && ./script/generate-schema",
+    "watch": "PATH=$PATH:../../node_modules/.bin && tsc -p . --watch",
+    "check": "PATH=$PATH:../../node_modules/.bin && gts check",
+    "compile": "PATH=$PATH:../../node_modules/.bin && tsc -p .",
+    "fix": "PATH=$PATH:../../node_modules/.bin && npm run generate-schema && gts fix",
+    "pretest": "npm run compile",
+    "posttest": "npm run check"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "ts-json-schema-generator": "^0.65.0"
+  },
+  "homepage": "https://github.com/covid-modeling/model-runner#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/covid-modeling/model-runner.git",
+    "directory": "packages/neherlab-covid-19-scenarios"
+  },
+  "bugs": {
+    "url": "https://github.com/covid-modeling/model-runner/issues",
+    "email": "covid-modeling+opensource@github.com"
+  }
+}

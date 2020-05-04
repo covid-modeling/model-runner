@@ -1,0 +1,13 @@
+{
+  "packages": [
+    "packages/*"
+  ],
+  "npmClient": "npm",
+  "command": {
+    "bootstrap": {
+      "hoist": true,
+      "nohoist": ["ts-json-schema-generator"]
+    }
+  },
+  "version": "independent"
+}

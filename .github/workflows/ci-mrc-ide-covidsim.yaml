@@ -1,0 +1,73 @@
+name: MRC-IDE CovidSim Connector-Build, Test & Publish Docker
+on:
+  push:
+    paths:
+      - 'packages/mrc-ide-covidsim/**'
+      - 'packages/api/**'
+
+env:
+  IMAGE_NAME: mrc-ide-covidsim-connector
+
+jobs:
+  # Run tests.
+  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/mrc-ide-covidsim
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log into registry for Docker images
+        run: echo "${{ secrets.GITHUB_PAT }}" | docker login docker.pkg.github.com -u ${{ secrets.GITHUB_PAT_USER }} --password-stdin
+
+      - name: Run tests
+        run: docker-compose build test
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: packages/mrc-ide-covidsim
+
+    strategy:
+      fail-fast: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Log into registry for Imperial images
+        run: echo "${{ secrets.GITHUB_PAT }}" | docker login docker.pkg.github.com -u ${{ secrets.GITHUB_PAT_USER }} --password-stdin
+
+      - name: Build image
+        run: docker-compose build release
+
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Push image (Local)
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          # Strip git ref prefix (refs/heads/ or refs/tags/) from version
+          # but keep the rest of the ref. Replaces / with - to make the package name valid.
+          # Do not attempt to obtain the version number from vx.y.z tags:
+          # this is handled by the publish_version workflow.
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,refs/\(heads\|tags\)/\(.*\),\2,' | tr '/' '-')
+          # Always tag with git sha or version tag
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag image $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
+          # Use Docker `latest` tag convention for master.
+          [ "$VERSION" == "master" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag image $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION

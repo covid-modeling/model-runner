@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+
+/**
+ * Structurally compare two CovidSim parameter .txt files
+ */
+
+const oldPath = process.argv[2]
+const newPath = process.argv[3]
+if (!oldPath || !newPath) {
+  console.log(`Usage: diff-covid-sim-params <old-params-path> <new-params>`)
+  process.exit(1)
+}
+
+const fs = require('fs')
+const { parse } = require('../dist/src/imperial-params')
+
+const oldText = fs.readFileSync(oldPath, 'utf8')
+const newText = fs.readFileSync(newPath, 'utf8')
+const oldParams = parse(oldText)
+const newParams = parse(newText)
+
+const keys = Object.keys(Object.assign({}, oldParams, newParams)).sort()
+
+for (const key of keys) {
+  const oldValue = JSON.stringify(oldParams[key])
+  const newValue = JSON.stringify(newParams[key])
+  if (oldValue !== newValue) {
+    if (oldValue == null) {
+      console.log(`+ ${key} = ${newValue}`)
+    } else if (newValue == null) {
+      console.log(`- ${key} = ${oldValue}`)
+    } else {
+      console.log(`  ${key} =\n    - ${oldValue}\n    + ${newValue}`)
+    }
+  }
+}

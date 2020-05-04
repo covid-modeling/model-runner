@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e
+
+: ${IMPERIAL_REPO:=../../../covid-sim}
+
+if [ ! -d $IMPERIAL_REPO ]; then
+cat <<MESSAGE
+Set the 'IMPERIAL_REPO' to the path to the imperial model repository,
+or check out the repository to ../../../covid-sim
+For now we recommend you check out this fork and branch:
+https://github.com/mrc-ide/covid-sim
+MESSAGE
+exit 1
+fi
+
+# Compile the imperial model executable `SpatialSim`.
+(
+    cd $IMPERIAL_REPO
+    mkdir -p build
+    cd build
+
+    rm -rf CMakeFiles
+    cmake -D COUNTRY=UK ../src
+    make
+    mv CovidSim CovidSim-UK
+
+    rm -rf CMakeFiles
+    cmake -D COUNTRY=US ../src
+    make
+    mv CovidSim CovidSim-US
+)
+
+# Just copy the UK data for now.
+rm -rf .local/bin data
+mkdir -p .local/bin data
+cp $IMPERIAL_REPO/build/CovidSim* .local/bin/
+cp -r $IMPERIAL_REPO/data/* data
+gunzip -f data/populations/*.gz

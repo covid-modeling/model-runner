@@ -1,0 +1,16 @@
+{
+  "extends": "gts/tsconfig-google.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "strict": false,
+    "outDir": "dist"
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}

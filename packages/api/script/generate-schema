@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+echo Generating input schema
+ts-json-schema-generator --path src/index.ts --type RequestInput --out schema/input.json
+
+echo Generating output schema
+ts-json-schema-generator --path src/index.ts --type ModelOutput --out schema/output.json

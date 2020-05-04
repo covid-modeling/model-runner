@@ -1,0 +1,9 @@
+/.local
+/node_modules
+/dist
+/data
+/log
+/input
+/output
+/log
+.vscode
