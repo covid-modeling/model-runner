@@ -6,7 +6,7 @@ The `model-runner` service takes a JSON object as input describing assumptions, 
 
 This project is currently in production and actively maintained. We are happy to accept [contributions](CONTRIBUTING.md) for new model connectors from the community.
 
-To learn more about this project's goals, please see [PROJECT-INTENT.md](https://github.com/covid-modeling/web/blob/master/PROJECT-INTENT.md)
+To learn more about this project's goals, please see [PROJECT-INTENT.md](https://github.com/covid-modeling/web-ui/blob/master/PROJECT-INTENT.md)
 
 ## Links
 
