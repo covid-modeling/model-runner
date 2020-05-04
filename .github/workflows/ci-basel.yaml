@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Log into registry for Imperial images
-        run: echo "${{ secrets.GITHUB_PAT }}" | docker login docker.pkg.github.com -u ${{ secrets.GITHUB_PAT_USER }} --password-stdin
+        run: echo "${{ secrets.SERVICE_USER_PAT }}" | docker login docker.pkg.github.com -u ${{ secrets.SERVICE_USER }} --password-stdin
 
       - name: Run tests
         run: docker-compose build test
@@ -42,7 +42,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Log into registry for Docker images
-        run: echo "${{ secrets.GITHUB_PAT }}" | docker login docker.pkg.github.com -u ${{ secrets.GITHUB_PAT_USER }} --password-stdin
+        run: echo "${{ secrets.SERVICE_USER_PAT }}" | docker login docker.pkg.github.com -u ${{ secrets.SERVICE_USER }} --password-stdin
 
       - name: Build image
         run: docker-compose build release
