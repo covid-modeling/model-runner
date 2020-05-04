@@ -20,6 +20,7 @@ export interface ModelOutput {
      */
     extent: [number, number]
   }
+
   aggregate: {
     metrics: SeverityMetrics
   }
