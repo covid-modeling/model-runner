@@ -1,0 +1,29 @@
+name: API Package-Publish to npm for Tags/Releases
+on:
+  push:
+    tags:
+      - 'api/v*'
+jobs:
+  npm-publish:
+    name: npm-publish
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/api
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@master
+    - name: Set up Node.js
+      uses: actions/setup-node@master
+      with:
+        always-auth: true
+        node-version: '12.x'
+        registry-url: 'https://registry.npmjs.org'
+        scope: '@covid-modeling'
+    - name: Install
+      run: npm install
+    - name: Publish
+      run: npm publish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
