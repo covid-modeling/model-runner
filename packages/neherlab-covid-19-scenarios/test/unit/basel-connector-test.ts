@@ -114,10 +114,6 @@ suite('converting to Basel model input', () => {
         ],
       }
       const generalInput: input.ModelInput = {
-        model: {
-          slug: ModelSlug.Basel,
-          imageURL: 'image-url',
-        },
         region: r.region,
         subregion: r.subregion,
         parameters,
@@ -459,10 +455,6 @@ suite('converting from Basel model output', () => {
       r0: null,
     }
     const generalInput: input.ModelInput = {
-      model: {
-        slug: ModelSlug.Basel,
-        imageURL: 'image-url',
-      },
       region: 'Australia',
       parameters,
     }

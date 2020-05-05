@@ -1,5 +1,5 @@
 {
-  "$ref": "#/definitions/ModelInput",
+  "$ref": "#/definitions/RequestInput",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
     "ISODate": {
@@ -44,6 +44,22 @@
       "required": [
         "startDate",
         "reductionPopulationContact"
+      ],
+      "type": "object"
+    },
+    "Model": {
+      "additionalProperties": false,
+      "properties": {
+        "imageURL": {
+          "type": "string"
+        },
+        "slug": {
+          "$ref": "#/definitions/ModelSlug"
+        }
+      },
+      "required": [
+        "slug",
+        "imageURL"
       ],
       "type": "object"
     },
@@ -103,6 +119,47 @@
         "calibrationDeathCount",
         "r0",
         "interventionPeriods"
+      ],
+      "type": "object"
+    },
+    "ModelSlug": {
+      "enum": [
+        "mrc-ide-covid-sim",
+        "basel",
+        "mc19"
+      ],
+      "type": "string"
+    },
+    "RequestInput": {
+      "additionalProperties": false,
+      "properties": {
+        "callbackURL": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "configuration": {
+          "$ref": "#/definitions/ModelInput"
+        },
+        "id": {
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "models": {
+          "items": {
+            "$ref": "#/definitions/Model"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "models",
+        "configuration",
+        "callbackURL"
       ],
       "type": "object"
     }

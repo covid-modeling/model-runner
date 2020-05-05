@@ -1,9 +1,5 @@
 {
   "metadata": {
-    "model": {
-      "slug": "mrc-ide-covid-sim",
-      "imageURL": "docker.pkg.github.com/github-covid-modelling/model-runner/mrc-ide-covidsim-connector:master"
-    },
     "region": "US",
     "subregion": "US-WY",
     "parameters": {

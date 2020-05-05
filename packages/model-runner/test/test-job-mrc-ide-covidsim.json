@@ -8,10 +8,6 @@
     }
   ],
   "configuration": {
-    "model": {
-      "slug": "mrc-ide-covid-sim",
-      "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/mrc-ide-covidsim-connector:master"
-    },
     "region": "US",
     "subregion": "US-WY",
     "parameters": {

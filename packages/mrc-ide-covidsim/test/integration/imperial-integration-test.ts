@@ -21,10 +21,6 @@ suite('imperial integration', () => {
     )
 
     const modelInput: input.ModelInput = {
-      model: {
-        slug: ModelSlug.MRCIDECovidSim,
-        imageURL: '',
-      },
       region: 'US',
       subregion: 'US-WY',
       parameters: {
@@ -102,10 +98,6 @@ suite('imperial integration', () => {
     )
 
     const modelInput: input.ModelInput = {
-      model: {
-        slug: ModelSlug.MRCIDECovidSim,
-        imageURL: '',
-      },
       region: 'US',
       subregion: 'US-WY',
       parameters: {
@@ -154,10 +146,6 @@ suite('imperial integration', () => {
     )
 
     const modelInput: input.ModelInput = {
-      model: {
-        slug: ModelSlug.MRCIDECovidSim,
-        imageURL: '',
-      },
       region: 'LU',
       subregion: '',
       parameters: {

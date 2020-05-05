@@ -1,10 +1,7 @@
-import { Model } from './index'
-
 /**
  * A generalized description of the input to an epidemiological model.
  */
 export interface ModelInput {
-  model: Model
   region: string
   subregion?: string
   parameters: ModelParameters
