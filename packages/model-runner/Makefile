@@ -23,13 +23,11 @@ build: format
 
 .PHONY: test
 test: build
-	# FIXME: uncomment this when there are some actual tests
-	#npm run test
+	npm run test
 
 .PHONY: integration-test
 integration-test: build
-	# FIXME: uncomment this when there are some actual tests
-	#npm run integration-test
+	npm run integration-test
 
 .PHONY: release
 release:

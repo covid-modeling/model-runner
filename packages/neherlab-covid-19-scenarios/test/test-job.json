@@ -8,10 +8,6 @@
     }
   ],
   "configuration": {
-    "model": {
-      "slug": "basel",
-      "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/neherlab-covid-19-scenarios-connector:latest"
-    },
     "region": "US",
     "subregion": "US-NY",
     "parameters": {
