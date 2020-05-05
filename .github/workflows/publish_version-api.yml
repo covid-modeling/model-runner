@@ -12,9 +12,9 @@ jobs:
         working-directory: packages/api
     steps:
     - name: Checkout repository
-      uses: actions/checkout@master
+      uses: actions/checkout@v2
     - name: Set up Node.js
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v1
       with:
         always-auth: true
         node-version: '12.x'
