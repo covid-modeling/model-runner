@@ -11,7 +11,8 @@
     "compile": "PATH=$PATH:../../node_modules/.bin && tsc -p .",
     "fix": "PATH=$PATH:../../node_modules/.bin && npm run generate-schema && gts fix",
     "pretest": "npm run compile",
-    "posttest": "npm run check"
+    "posttest": "npm run check",
+    "prepare": "tsc -p ."
   },
   "license": "MIT",
   "devDependencies": {
