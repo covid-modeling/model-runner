@@ -18,7 +18,7 @@ suite('schema tests', () => {
     const input = JSON.parse('{}') as RequestInput
     expect(() => enforceRunnerInputSchema(input)).to.throw(
       Error,
-      'Invalid model input JSON. Details:'
+      'Invalid model runner input JSON. Details:'
     )
   })
 
