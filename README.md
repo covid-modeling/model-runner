@@ -133,6 +133,19 @@ GitHub Actions will build, test, and publish a package whenever changes are comm
 
 To build and publish a numbered version of a package, create a Git tag of the form `package/vmajor.minor.patch`, for example `model-runner/v1.2.3`, and push it to the repository.
 
+### Publishing @covid-modeling/api package to npm
+
+To publish a new version of the `api` package to npm:
+
+1. Bump the version number of the `api` package.
+2. Create an annotated tag (where A.B.C is the package version):
+
+    ```sh
+    git tag -a -m api/vA.B.C api/vA.B.C
+    ```
+
+3. Push the tag to the remote: `git push origin api/vA.B.C`
+
 ## Questions, comments, and where to find us
 
 - Found a bug? [Raise an issue!](https://github.com/covid-modeling/model-runner/issues)

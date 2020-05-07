@@ -11,10 +11,12 @@
     "compile": "PATH=$PATH:../../node_modules/.bin && tsc -p .",
     "fix": "PATH=$PATH:../../node_modules/.bin && npm run generate-schema && gts fix",
     "pretest": "npm run compile",
-    "posttest": "npm run check"
+    "posttest": "npm run check",
+    "prepare": "tsc -p ."
   },
   "license": "MIT",
   "devDependencies": {
+    "gts": "^1.1.2",
     "ts-json-schema-generator": "^0.65.0"
   },
   "homepage": "https://github.com/covid-modeling/model-runner#readme",

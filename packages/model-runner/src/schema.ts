@@ -17,7 +17,7 @@ const validateOutputSchema = jsonSchema(
 export function enforceRunnerInputSchema(input: RequestInput) {
   if (!validateRunnerInputSchema(input)) {
     throw new Error(
-      `Invalid model input JSON. Details: ${JSON.stringify(
+      `Invalid model runner input JSON. Details: ${JSON.stringify(
         validateRunnerInputSchema.errors
       )}`
     )
