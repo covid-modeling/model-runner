@@ -23,7 +23,7 @@ import { enforceRunnerInputSchema, enforceOutputSchema } from './schema'
 
 let inputID: string | number | null = null
 let callbackURL: string | null = null
-const modelSlug: ModelSlug | null = null
+let modelSlug: ModelSlug | null = null
 
 const handleRejection: NodeJS.UnhandledRejectionListener = err => {
   const finalLogger = pino.final(logger)
@@ -55,11 +55,11 @@ async function main() {
 
     enforceRunnerInputSchema(input)
 
-    inputID = input.id
-    callbackURL = input.callbackURL
     logger.info(JSON.stringify(input))
     const model = input.models.shift()
-    const modelSlug = model.slug
+    inputID = input.id
+    callbackURL = input.callbackURL
+    modelSlug = model.slug
     const dockerImage = model.imageURL
 
     // Notify the UI that the simulation is starting.
