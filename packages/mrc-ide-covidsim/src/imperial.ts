@@ -51,16 +51,21 @@ export class ImperialModel implements Model {
   inputs(input: input.ModelInput): ImperialRunnerModelInput {
     const inputFiles = []
     // Select the correct executable and static inputs based on the region.
-    let modelPath,
-      adminPath,
+    let adminPath,
       populationDensityPath,
       preParametersTemplatePath,
-      parametersTemplatePath,
       subregionName
+
+    const modelPath = path.join(this.binDir, 'CovidSim')
+
+    const parametersTemplatePath = path.join(
+      this.dataDir,
+      'param_files',
+      'p_NoInt.txt'
+    )
 
     // The US has its own executable, population density file, and pre-params file.
     if (input.region === 'US') {
-      modelPath = path.join(this.binDir, 'CovidSim-US')
       adminPath = path.join(
         this.dataDir,
         'admin_units',
@@ -76,11 +81,6 @@ export class ImperialModel implements Model {
         'param_files',
         'preUS_R0=2.0.txt'
       )
-      parametersTemplatePath = path.join(
-        this.dataDir,
-        'param_files',
-        'p_NoInt.txt'
-      )
       subregionName = US_SUBREGIONS[input.subregion]
     }
 
@@ -90,7 +90,6 @@ export class ImperialModel implements Model {
         input.region
       ]
 
-      modelPath = path.join(this.binDir, 'CovidSim-UK')
       adminPath = path.join(this.dataDir, 'admin_units', adminFileName)
       populationDensityPath = path.join(
         this.dataDir,
@@ -101,11 +100,6 @@ export class ImperialModel implements Model {
         this.dataDir,
         'param_files',
         'preUK_R0=2.0.txt'
-      )
-      parametersTemplatePath = path.join(
-        this.dataDir,
-        'param_files',
-        'p_NoInt.txt'
       )
       subregionName = subregions[input.subregion]
     }

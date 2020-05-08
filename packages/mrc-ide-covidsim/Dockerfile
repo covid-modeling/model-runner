@@ -1,7 +1,6 @@
 # Default version if the variable is not set. The version in the .env file takes precedence.
 ARG COVIDSIM_VER=master
-FROM docker.pkg.github.com/mrc-ide/covid-sim/covidsim-us:${COVIDSIM_VER} AS covidsim-US
-FROM docker.pkg.github.com/mrc-ide/covid-sim/covidsim-uk:${COVIDSIM_VER} AS covidsim-UK
+FROM docker.pkg.github.com/mrc-ide/covid-sim/covidsim-us:${COVIDSIM_VER} AS covidsim
 
 ####################################################################
 FROM node:buster-slim AS build
@@ -17,9 +16,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy and unzip the imperial model data and executables
-COPY --from=covidsim-UK /data/input /model/input
-COPY --from=covidsim-UK /usr/bin/CovidSim /usr/bin/CovidSim-UK
-COPY --from=covidsim-US /usr/bin/CovidSim /usr/bin/CovidSim-US
+COPY --from=covidsim /data/input /model/input
+COPY --from=covidsim /usr/bin/CovidSim /usr/bin/CovidSim
 RUN gunzip /model/input/populations/*.gz \
     && rm -f /model/input/populations/*.gz
 

@@ -21,19 +21,13 @@ fi
     cd build
 
     rm -rf CMakeFiles
-    cmake -D COUNTRY=UK ../src
+    cmake ../src
     make
-    mv CovidSim CovidSim-UK
-
-    rm -rf CMakeFiles
-    cmake -D COUNTRY=US ../src
-    make
-    mv CovidSim CovidSim-US
 )
 
 # Just copy the UK data for now.
 rm -rf .local/bin data
 mkdir -p .local/bin data
-cp $IMPERIAL_REPO/build/CovidSim* .local/bin/
+cp $IMPERIAL_REPO/build/CovidSim .local/bin/
 cp -r $IMPERIAL_REPO/data/* data
 gunzip -f data/populations/*.gz
