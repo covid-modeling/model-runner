@@ -43,10 +43,10 @@ export async function pullImage(
           logger.info('Docker pull complete')
           resolve(message)
         })
-        stream.on('error', err => {
+        stream.on('error', streamErr => {
           logger.warn('Docker pull failed')
-          logger.error(err)
-          reject(err)
+          logger.error(streamErr)
+          reject(streamErr)
         })
       }
     )
