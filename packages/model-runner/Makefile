@@ -23,13 +23,11 @@ build: format
 
 .PHONY: test
 test: build
-	# FIXME: uncomment this when there are some actual tests
-	#npm run test
+	npm run test
 
 .PHONY: integration-test
 integration-test: build
-	# FIXME: uncomment this when there are some actual tests
-	#npm run integration-test
+	npm run integration-test
 
 .PHONY: release
 release:
@@ -44,6 +42,4 @@ run-local: build
 
 .PHONY: run-remote
 run-remote:
-	./bin/submit-run ~/.github/covid_pat.json test/test-job-mrc-ide-covidsim.json
-	./bin/submit-run ~/.github/covid_pat.json test/test-job-basel.json
-	./bin/submit-run ~/.github/covid_pat.json test/test-job-mc19.json
+	./bin/submit-run ~/.github/covid_pat.json test/test-job-matrix.json

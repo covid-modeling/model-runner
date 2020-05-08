@@ -2,8 +2,11 @@
 
 set -e
 
+echo Generating runner schema
+ts-json-schema-generator --path src/index.ts --type RequestInput --out schema/runner.json
+
 echo Generating input schema
-ts-json-schema-generator --path src/index.ts --type RequestInput --out schema/input.json
+ts-json-schema-generator --path src/index.ts --type ModelInput --out schema/input.json
 
 echo Generating output schema
 ts-json-schema-generator --path src/index.ts --type ModelOutput --out schema/output.json

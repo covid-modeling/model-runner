@@ -1,6 +1,6 @@
 {
   "name": "@covid-modeling/model-runner",
-  "version": "0.8.0",
+  "version": "1.1.0",
   "main": "dist/index.js",
   "scripts": {
     "test": "PATH=$PATH:../../node_modules/.bin && mocha --debug-brk --ui tdd -r ts-node/register test/unit/*-test.ts",
@@ -19,7 +19,7 @@
   "dependencies": {
     "@azure/identity": "^1.1.0-preview1",
     "@azure/storage-blob": "^12.1.1",
-    "@covid-modeling/api": "0.8.*",
+    "@covid-modeling/api": "0.9.*",
     "archiver": "^4.0.1",
     "d3": "^5.15.0",
     "dockerode": "^3.2.0",

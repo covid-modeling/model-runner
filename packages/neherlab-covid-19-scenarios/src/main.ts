@@ -3,7 +3,7 @@ import * as path from 'path'
 import * as mkdirp from 'mkdirp'
 import { readFileSync, writeFileSync } from 'fs'
 import * as jsonSchema from 'jsen'
-import { RequestInput } from '@covid-modeling/api'
+import { input } from '@covid-modeling/api'
 import { logger } from './logger'
 import {
   BIN_DIR,
@@ -35,8 +35,8 @@ async function main() {
 
     // Read the request input JSON.
     const inputData = readFileSync(inputFilename, 'utf8')
-    const input = JSON.parse(inputData) as RequestInput
-    if (!enforceSchema(input)) {
+    const modelInput = JSON.parse(inputData) as input.ModelInput
+    if (!enforceSchema(modelInput)) {
       throw new Error(
         `Invalid model input JSON. Details: ${JSON.stringify(
           enforceSchema.errors
@@ -59,7 +59,7 @@ async function main() {
       outputsDir
     )
 
-    const runInput = model.inputs(input.configuration)
+    const runInput = model.inputs(modelInput)
 
     logger.info('Starting model run')
     logger.info(JSON.stringify(runInput))

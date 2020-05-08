@@ -5,42 +5,43 @@
     {
       "slug": "mrc-ide-covid-sim",
       "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/mrc-ide-covidsim-connector:master"
+    },
+    {
+      "slug": "basel",
+      "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/neherlab-covid-19-scenarios-connector:master"
+    },
+    {
+      "slug": "mc19",
+      "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/modelingcovid-covidmodel-connector:master"
     }
   ],
   "configuration": {
     "region": "US",
-    "subregion": "US-WY",
+    "subregion": "US-NY",
     "parameters": {
       "calibrationDate": "2020-04-18",
       "calibrationCaseCount": 1400,
       "calibrationDeathCount": 200,
-      "r0": null,
       "interventionPeriods": [
         {
-          "startDate": "2020-03-15",
-          "reductionPopulationContact": 15,
+          "startDate": "2020-03-18",
+          "reductionPopulationContact": 10,
           "socialDistancing": "moderate"
         },
         {
-          "startDate": "2020-03-21",
-          "reductionPopulationContact": 65,
+          "startDate": "2020-03-22",
+          "reductionPopulationContact": 34,
           "socialDistancing": "moderate",
           "schoolClosure": "aggressive"
         },
         {
-          "startDate": "2020-03-25",
-          "reductionPopulationContact": 90,
+          "startDate": "2020-03-23",
+          "reductionPopulationContact": 64,
           "socialDistancing": "aggressive",
           "schoolClosure": "aggressive"
         },
         {
-          "startDate": "2020-05-01",
-          "reductionPopulationContact": 50,
-          "socialDistancing": "moderate",
-          "schoolClosure": "mild"
-        },
-        {
-          "startDate": "2020-06-01",
+          "startDate": "2020-07-01",
           "reductionPopulationContact": 0
         }
       ],

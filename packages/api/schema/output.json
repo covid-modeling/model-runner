@@ -47,29 +47,10 @@
       ],
       "type": "object"
     },
-    "Model": {
-      "additionalProperties": false,
-      "properties": {
-        "imageURL": {
-          "type": "string"
-        },
-        "slug": {
-          "$ref": "#/definitions/ModelSlug"
-        }
-      },
-      "required": [
-        "slug",
-        "imageURL"
-      ],
-      "type": "object"
-    },
     "ModelInput": {
       "additionalProperties": false,
       "description": "A generalized description of the input to an epidemiological model.",
       "properties": {
-        "model": {
-          "$ref": "#/definitions/Model"
-        },
         "parameters": {
           "$ref": "#/definitions/ModelParameters"
         },
@@ -81,7 +62,6 @@
         }
       },
       "required": [
-        "model",
         "region",
         "parameters"
       ],
@@ -187,14 +167,6 @@
         "interventionPeriods"
       ],
       "type": "object"
-    },
-    "ModelSlug": {
-      "enum": [
-        "mrc-ide-covid-sim",
-        "basel",
-        "mc19"
-      ],
-      "type": "string"
     },
     "SeverityMetrics": {
       "additionalProperties": false,

@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import * as fs from 'fs'
 import * as path from 'path'
 import { RequestInput } from '@covid-modeling/api'
-import { enforceInputSchema, enforceOutputSchema } from '../../src/schema'
+import { enforceRunnerInputSchema, enforceOutputSchema } from '../../src/schema'
 
 suite('schema tests', () => {
   test('enforceInputSchema, on valid input', () => {
@@ -11,14 +11,14 @@ suite('schema tests', () => {
       'utf8'
     )
     const input = JSON.parse(inputData) as RequestInput
-    expect(() => enforceInputSchema(input)).not.to.throw()
+    expect(() => enforceRunnerInputSchema(input)).not.to.throw()
   })
 
   test('enforceInputSchema, on invalid input', () => {
     const input = JSON.parse('{}') as RequestInput
-    expect(() => enforceInputSchema(input)).to.throw(
+    expect(() => enforceRunnerInputSchema(input)).to.throw(
       Error,
-      'Invalid model input JSON. Details:'
+      'Invalid model runner input JSON. Details:'
     )
   })
 

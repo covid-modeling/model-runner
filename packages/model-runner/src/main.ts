@@ -19,11 +19,11 @@ import * as fs from 'fs'
 import * as crypto from 'crypto'
 import { createExportZip } from './export'
 import * as docker from './docker'
-import { enforceInputSchema, enforceOutputSchema } from './schema'
+import { enforceRunnerInputSchema, enforceOutputSchema } from './schema'
 
 let inputID: string | number | null = null
 let callbackURL: string | null = null
-let modelSlug: ModelSlug | null = null
+const modelSlug: ModelSlug | null = null
 
 const handleRejection: NodeJS.UnhandledRejectionListener = err => {
   const finalLogger = pino.final(logger)
@@ -53,13 +53,14 @@ async function main() {
     const inputData = fs.readFileSync(inputFilename, 'utf8')
     const input = JSON.parse(inputData) as RequestInput
 
-    enforceInputSchema(input)
+    enforceRunnerInputSchema(input)
 
     inputID = input.id
     callbackURL = input.callbackURL
-    logger.info(input.configuration)
-    modelSlug = input.configuration.model.slug
-    const dockerImage = input.configuration.model.imageURL
+    logger.info(JSON.stringify(input))
+    const model = input.models.shift()
+    const modelSlug = model.slug
+    const dockerImage = model.imageURL
 
     // Notify the UI that the simulation is starting.
     if (input.callbackURL) {
@@ -75,6 +76,12 @@ async function main() {
     const inputsDir = INPUT_DIR
     const outputsDir = OUTPUT_DIR
     mkdirp.sync(inputsDir)
+
+    fs.writeFileSync(
+      path.join(inputsDir, 'inputFile.json'),
+      JSON.stringify(input.configuration)
+    )
+
     mkdirp.sync(outputsDir)
     mkdirp.sync(LOG_DIR)
 
@@ -92,7 +99,7 @@ async function main() {
     )
 
     logger.info('Starting model run')
-    logger.info(JSON.stringify(input))
+    logger.info(JSON.stringify(input.configuration))
 
     logger.info('Running container: %s', dockerImage)
     await docker

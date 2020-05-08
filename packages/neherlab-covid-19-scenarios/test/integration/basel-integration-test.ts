@@ -69,10 +69,6 @@ suite('basel integration', () => {
       )
 
       const input: input.ModelInput = {
-        model: {
-          slug: ModelSlug.Basel,
-          imageURL: 'image-url',
-        },
         region: testRegion.region,
         subregion: testRegion.subregion,
         parameters: {

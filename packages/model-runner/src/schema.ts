@@ -1,12 +1,11 @@
 import * as jsonSchema from 'jsen'
-import { RequestInput } from '@covid-modeling/api'
+import { RequestInput, output } from '@covid-modeling/api'
 import * as fs from 'fs'
-import { ModelOutput } from '@covid-modeling/api/dist/src/model-output'
 
 // Load the RequestInput JSON schema, which is generated based on the type declaration
 // as part of the build step.
-const validateInputSchema = jsonSchema(
-  require('@covid-modeling/api/schema/input.json')
+const validateRunnerInputSchema = jsonSchema(
+  require('@covid-modeling/api/schema/runner.json')
 )
 
 // Load the ModelOutput JSON schema, which is generated based on the type declaration
@@ -15,11 +14,11 @@ const validateOutputSchema = jsonSchema(
   require('@covid-modeling/api/schema/output.json')
 )
 
-export function enforceInputSchema(input: RequestInput) {
-  if (!validateInputSchema(input)) {
+export function enforceRunnerInputSchema(input: RequestInput) {
+  if (!validateRunnerInputSchema(input)) {
     throw new Error(
-      `Invalid model input JSON. Details: ${JSON.stringify(
-        validateInputSchema.errors
+      `Invalid model runner input JSON. Details: ${JSON.stringify(
+        validateRunnerInputSchema.errors
       )}`
     )
   }
@@ -27,7 +26,7 @@ export function enforceInputSchema(input: RequestInput) {
 
 export function enforceOutputSchema(outputFilePath: string) {
   const outputData = fs.readFileSync(outputFilePath, 'utf8')
-  const output = JSON.parse(outputData) as ModelOutput
+  const output = JSON.parse(outputData) as output.ModelOutput
 
   if (!validateOutputSchema(output)) {
     throw new Error(

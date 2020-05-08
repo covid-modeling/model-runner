@@ -8,10 +8,6 @@
     }
   ],
   "configuration": {
-    "model": {
-      "slug": "mc19",
-      "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/modelingcovid-covidmodel-connector:latest"
-    },
     "region": "US",
     "subregion": "US-NY",
     "parameters": {
@@ -40,7 +36,8 @@
           "startDate": "2020-07-01",
           "reductionPopulationContact": 0
         }
-      ]
+      ],
+      "r0": null
     }
   }
 }
