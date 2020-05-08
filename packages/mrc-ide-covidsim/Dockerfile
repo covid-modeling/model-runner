@@ -1,6 +1,6 @@
 # Default version if the variable is not set. The version in the .env file takes precedence.
 ARG COVIDSIM_VER=master
-FROM docker.pkg.github.com/mrc-ide/covid-sim/covidsim-us:${COVIDSIM_VER} AS covidsim
+FROM docker.pkg.github.com/mrc-ide/covid-sim/covidsim:${COVIDSIM_VER} AS covidsim
 
 ####################################################################
 FROM node:buster-slim AS build
