@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -e
+
+VERSION=$1
+
+if [ -z $VERSION ]; then
+cat <<MESSAGE
+Push a release tag of the api project to GitHub and kick off the
+release process
+
+USAGE: publish-release <VERSION>
+
+Where <VERSION> is the version to release. It must be in the form:
+
+    api/vA.B.C
+MESSAGE
+exit 1
+fi
+
+if [[ $VERSION != api/v* ]]; then
+  echo Invalid version specified. Expected the folowing format: api/vA.B.C
+  echo
+  exit 1
+fi
+
+echo Publishing release of @codid-modeling/api package to npm
+
+git tag -a -m $VERSION $VERSION
+git push origin $VERSION
