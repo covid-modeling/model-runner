@@ -26,9 +26,9 @@ export function enforceRunnerInputSchema(input: RequestInput) {
 
 export function enforceOutputSchema(outputFilePath: string) {
   const outputData = fs.readFileSync(outputFilePath, 'utf8')
-  const output = JSON.parse(outputData) as output.ModelOutput
+  const outputObj = JSON.parse(outputData) as output.ModelOutput
 
-  if (!validateOutputSchema(output)) {
+  if (!validateOutputSchema(outputObj)) {
     throw new Error(
       `Invalid model output JSON. Details: ${JSON.stringify(
         validateOutputSchema.errors
