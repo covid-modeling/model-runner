@@ -57,7 +57,7 @@ async function main() {
 
     inputID = input.id
     callbackURL = input.callbackURL
-    logger.info(input.configuration)
+    logger.info(JSON.stringify(input))
     const model = input.models.shift()
     const modelSlug = model.slug
     const dockerImage = model.imageURL
@@ -99,7 +99,7 @@ async function main() {
     )
 
     logger.info('Starting model run')
-    logger.info(JSON.stringify(input))
+    logger.info(JSON.stringify(input.configuration))
 
     logger.info('Running container: %s', dockerImage)
     await docker
