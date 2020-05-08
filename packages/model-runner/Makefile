@@ -42,6 +42,4 @@ run-local: build
 
 .PHONY: run-remote
 run-remote:
-	./bin/submit-run ~/.github/covid_pat.json test/test-job-mrc-ide-covidsim.json
-	./bin/submit-run ~/.github/covid_pat.json test/test-job-basel.json
-	./bin/submit-run ~/.github/covid_pat.json test/test-job-mc19.json
+	./bin/submit-run ~/.github/covid_pat.json test/test-job-matrix.json
