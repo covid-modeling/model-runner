@@ -1,46 +1,36 @@
 {
-  "id": "my-model-run-id",
-  "callbackURL": null,
-  "models": [
-    {
-      "slug": "mc19",
-      "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/modelingcovid-covidmodel-connector:latest"
-    }
-  ],
-  "configuration": {
-    "model": {
-      "slug": "mc19",
-      "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/modelingcovid-covidmodel-connector:latest"
-    },
-    "region": "US",
-    "subregion": "US-NY",
-    "parameters": {
-      "calibrationDate": "2020-04-18",
-      "calibrationCaseCount": 1400,
-      "calibrationDeathCount": 200,
-      "interventionPeriods": [
-        {
-          "startDate": "2020-03-18",
-          "reductionPopulationContact": 10,
-          "socialDistancing": "moderate"
-        },
-        {
-          "startDate": "2020-03-22",
-          "reductionPopulationContact": 34,
-          "socialDistancing": "moderate",
-          "schoolClosure": "aggressive"
-        },
-        {
-          "startDate": "2020-03-23",
-          "reductionPopulationContact": 64,
-          "socialDistancing": "aggressive",
-          "schoolClosure": "aggressive"
-        },
-        {
-          "startDate": "2020-07-01",
-          "reductionPopulationContact": 0
-        }
-      ]
-    }
+  "model": {
+    "slug": "mc19",
+    "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/modelingcovid-covidmodel-connector:latest"
+  },
+  "region": "US",
+  "subregion": "US-NY",
+  "parameters": {
+    "calibrationDate": "2020-04-18",
+    "calibrationCaseCount": 1400,
+    "calibrationDeathCount": 200,
+    "interventionPeriods": [
+      {
+        "startDate": "2020-03-18",
+        "reductionPopulationContact": 10,
+        "socialDistancing": "moderate"
+      },
+      {
+        "startDate": "2020-03-22",
+        "reductionPopulationContact": 34,
+        "socialDistancing": "moderate",
+        "schoolClosure": "aggressive"
+      },
+      {
+        "startDate": "2020-03-23",
+        "reductionPopulationContact": 64,
+        "socialDistancing": "aggressive",
+        "schoolClosure": "aggressive"
+      },
+      {
+        "startDate": "2020-07-01",
+        "reductionPopulationContact": 0
+      }
+    ]
   }
 }

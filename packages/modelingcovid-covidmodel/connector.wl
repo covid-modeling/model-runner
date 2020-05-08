@@ -46,7 +46,7 @@ translateDateIntoOffset[dateString_]:=Module[{
 ];
 
 (* Reads GitHub unified UI input JSON from the given file. *)
-readInputJson[inputPath_] := Import[inputPath, "RawJSON"]["configuration"];
+readInputJson[inputPath_] := Import[inputPath, "RawJSON"];
 
 (*
 Translates GitHub unified UI `ModelInput` JSON into a pair of {distancing, stateCode}.
@@ -72,7 +72,7 @@ translateInput[modelInput_]:=Module[{
   (* If[modelInput["region"] != "US", "US", Throw["Only US states are currently supported."]]; *)
   (* Drop the US- prefix *)
   stateCode = StringDrop[modelInput["subregion"], 3];
-  
+
   interventionPeriods = modelInput["parameters"]["interventionPeriods"];
   (* Here we use the estimated reduction in population contact from the input.
   This is in [0..100] (0 = no distancing, 100 = total isolation).
