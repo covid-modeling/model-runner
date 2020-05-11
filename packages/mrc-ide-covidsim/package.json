@@ -11,11 +11,14 @@
     "check": "PATH=$PATH:../../node_modules/.bin && gts check",
     "clean": "PATH=$PATH:../../node_modules/.bin && gts clean",
     "compile": "PATH=$PATH:../../node_modules/.bin && tsc -p .",
-    "fix": "PATH=$PATH:../../node_modules/.bin && gts fix",
+    "fix": "gts fix",
     "pretest": "npm run compile",
     "posttest": "npm run check"
   },
   "license": "MIT",
+  "devDependencies": {
+    "gts": "^2.0.1"
+  },
   "dependencies": {
     "@covid-modeling/api": "0.9.*",
     "d3": "^5.15.0",

@@ -5,8 +5,8 @@
   "npmClient": "npm",
   "command": {
     "bootstrap": {
-      "hoist": true,
-      "nohoist": ["ts-json-schema-generator"]
+      "hoist": false,
+      "nohoist": ["eslint","gts","ts-json-schema-generator"]
     }
   },
   "version": "independent"
