@@ -29,6 +29,7 @@ export enum ModelSlug {
   MRCIDECovidSim = 'mrc-ide-covid-sim',
   Basel = 'basel',
   MC19 = 'mc19',
+  IDMCovasim = 'idm-covasim',
 }
 
 export interface Model {

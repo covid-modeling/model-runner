@@ -3,18 +3,6 @@
   "callbackURL": null,
   "models": [
     {
-      "slug": "mrc-ide-covid-sim",
-      "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/mrc-ide-covidsim-connector:master"
-    },
-    {
-      "slug": "basel",
-      "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/neherlab-covid-19-scenarios-connector:master"
-    },
-    {
-      "slug": "mc19",
-      "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/modelingcovid-covidmodel-connector:master"
-    },
-    {
       "slug": "idm-covasim",
       "imageURL": "docker.pkg.github.com/covid-modeling/covasim-connector/covasim-connector:master"
     }

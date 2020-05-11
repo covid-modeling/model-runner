@@ -126,7 +126,8 @@
       "enum": [
         "mrc-ide-covid-sim",
         "basel",
-        "mc19"
+        "mc19",
+        "idm-covasim"
       ],
       "type": "string"
     },
