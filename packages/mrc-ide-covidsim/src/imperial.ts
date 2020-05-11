@@ -6,10 +6,7 @@ import { convertOutput } from './convert-output'
 import * as params from './imperial-params'
 import { logger } from './logger'
 import { RunnerModelInput, Model } from './model'
-import {
-  EUROPE_COUNTRY_PARAMS_BY_ISO_CODE,
-  US_SUBREGIONS,
-} from './admin-mappings'
+import { COUNTRY_PARAMS_BY_ISO_CODE, US_SUBREGIONS } from './admin-mappings'
 
 // These are taken from the imperial model's regression test
 const SEEDS = ['98798150', '729101', '17389101', '4797132']
@@ -82,11 +79,8 @@ export class ImperialModel implements Model {
         'preUS_R0=2.0.txt'
       )
       subregionName = US_SUBREGIONS[input.subregion]
-    }
-
-    // European countries differ only in their admin file.
-    else if (EUROPE_COUNTRY_PARAMS_BY_ISO_CODE[input.region]) {
-      const { adminFileName, subregions } = EUROPE_COUNTRY_PARAMS_BY_ISO_CODE[
+    } else if (COUNTRY_PARAMS_BY_ISO_CODE[input.region]) {
+      const { adminFileName, subregions } = COUNTRY_PARAMS_BY_ISO_CODE[
         input.region
       ]
 
@@ -96,10 +90,15 @@ export class ImperialModel implements Model {
         'populations',
         'wpop_eur.txt'
       )
+
+      const preParamsFileName =
+        COUNTRY_PARAMS_BY_ISO_CODE[input.region].preParamsFileName ??
+        'preUK_R0=2.0.txt'
+
       preParametersTemplatePath = path.join(
         this.dataDir,
         'param_files',
-        'preUK_R0=2.0.txt'
+        preParamsFileName
       )
       subregionName = subregions[input.subregion]
     }
@@ -168,7 +167,7 @@ export class ImperialModel implements Model {
       `/P:${input.parametersFilePath}`,
       `/O:${this.outputDir}/result`,
       `/R:${r0 / 2.0}`,
-      `/S:${this.outputDir}/${input.subregionName}-network.bin`,
+      `/S:${this.outputDir}/${input.modelInput.region}-${input.subregionName}-network.bin`,
 
       // TODO - cache the intermediate network files
       // '/S:NetworkUKN_32T_100th.bin',

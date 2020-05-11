@@ -1,5 +1,5 @@
 // ISO-3166
-export const EUROPE_COUNTRY_PARAMS_BY_ISO_CODE = {
+export const COUNTRY_PARAMS_BY_ISO_CODE = {
   AT: {
     adminFileName: 'Austria_admin.txt',
     subregions: {},
@@ -165,6 +165,11 @@ export const EUROPE_COUNTRY_PARAMS_BY_ISO_CODE = {
     subregions: {
       'GB-LND': 'London',
     },
+  },
+  NG: {
+    adminFileName: 'Nigeria_admin.txt',
+    preParamsFileName: 'preNGA_R0=2.0.txt',
+    subregions: {},
   },
 }
 
