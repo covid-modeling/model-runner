@@ -13,6 +13,10 @@
     {
       "slug": "mc19",
       "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/modelingcovid-covidmodel-connector:master"
+    },
+    {
+      "slug": "idm-covasim",
+      "imageURL": "docker.pkg.github.com/covid-modeling/covasim-connector/covasim-connector:master"
     }
   ],
   "configuration": {
