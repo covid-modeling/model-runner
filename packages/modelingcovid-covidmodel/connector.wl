@@ -249,7 +249,7 @@ Print["Running model"];
 CreateDirectory["public/json/"<>stateCode<>"/"<>scenario1["id"]];
 CreateDirectory["public/json/"<>stateCode<>"/"<>customScenario["id"]];
 CreateDirectory["tests"];
-data = GenerateModelExport[10, {stateCode}];
+data = GenerateModelExport[1, {stateCode}];
 
 Print["Translating output for unified UI"];
 timeSeriesData = data[stateCode]["scenarios"][customScenario["id"]]["timeSeriesData"];
