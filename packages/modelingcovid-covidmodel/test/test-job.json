@@ -1,8 +1,4 @@
 {
-  "model": {
-    "slug": "mc19",
-    "imageURL": "docker.pkg.github.com/covid-modeling/model-runner/modelingcovid-covidmodel-connector:latest"
-  },
   "region": "US",
   "subregion": "US-NY",
   "parameters": {
