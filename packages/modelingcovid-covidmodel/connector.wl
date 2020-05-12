@@ -256,4 +256,5 @@ timeSeriesData = data[stateCode]["scenarios"][customScenario["id"]]["timeSeriesD
 modelOutput = translateOutput[modelInput, stateCode, timeSeriesData];
 
 Print["Writing output for unified UI to ", outputFile];
+Export[DirectoryName[outputFile] <> "/rawTimeSeries.json", timeSeriesData];
 Export[outputFile, modelOutput];
