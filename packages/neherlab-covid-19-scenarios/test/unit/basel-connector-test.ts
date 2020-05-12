@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { input, ModelSlug, output } from '@covid-modeling/api'
+import { input, output } from '@covid-modeling/api'
 
 import { AlgorithmResult, Scenario, AllParams } from '../../src/basel-api'
 import { BaselConnector, BaselRunnerModelInput } from '../../src/basel'

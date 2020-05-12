@@ -1,7 +1,7 @@
 import * as pino from 'pino'
 import * as path from 'path'
 import * as mkdirp from 'mkdirp'
-import { ModelSlug, RunStatus, RequestInput } from '@covid-modeling/api'
+import { RunStatus, RequestInput } from '@covid-modeling/api'
 import { BlobStorage } from './blobstore'
 import { notifyUI } from './notify-ui'
 import { logger } from './logger'
@@ -23,7 +23,7 @@ import { enforceRunnerInputSchema, enforceOutputSchema } from './schema'
 
 let inputID: string | number | null = null
 let callbackURL: string | null = null
-let modelSlug: ModelSlug | null = null
+let modelSlug: string | null = null
 
 const handleRejection: NodeJS.UnhandledRejectionListener = err => {
   const finalLogger = pino.final(logger)

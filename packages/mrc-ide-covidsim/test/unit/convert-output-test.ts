@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { ModelSlug, input } from '@covid-modeling/api'
+import { input } from '@covid-modeling/api'
 import { convertOutput } from '../../src/convert-output'
 
 const parameters: input.ModelParameters = {
@@ -13,10 +13,6 @@ const parameters: input.ModelParameters = {
 suite('converting imperial model output to JSON', () => {
   test('returns a time series for each metric', () => {
     const input = {
-      model: {
-        slug: ModelSlug.MRCIDECovidSim,
-        imageURL: '',
-      },
       region: 'US',
       subregion: 'US-WY',
       parameters,

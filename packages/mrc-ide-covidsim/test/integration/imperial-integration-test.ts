@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import { assert } from 'chai'
 import { ImperialModel } from '../../src/imperial'
 import { BIN_DIR, MODEL_DATA_DIR } from '../../src/config'
-import { input, ModelSlug } from '@covid-modeling/api'
+import { input } from '@covid-modeling/api'
 
 suite('imperial integration', () => {
   test('run imperial model for Wyoming', async () => {
