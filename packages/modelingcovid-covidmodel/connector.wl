@@ -116,7 +116,7 @@ translateInput[modelInput_]:=Module[{
 
   (* TODO: These are copied from modules in data.wl,
   and should be shared instead. *)
-  smoothing = 3;
+  smoothing = 7;
   SlowJoin := Fold[Module[{smoother},
       smoother=1-Exp[-Range[Length[#2]]/smoothing];
       Join[#1, Last[#1](1-smoother)+#2 smoother]]&];
@@ -127,6 +127,14 @@ translateInput[modelInput_]:=Module[{
   On[Assert];
   Assert[Length[fullDistancing] == Length[fullDays]];
   Off[Assert];
+
+  distancingDelay = 5;
+  Which[
+    distancingDelay>0,
+    smoothedFullDistancing=Join[ConstantArray[1,distancingDelay], smoothedFullDistancing[[;;-distancingDelay-1]]];,
+    distancingDelay<0,
+    smoothedFullDistancing=Join[smoothedFullDistancing[[distancingDelay+1;;]], ConstantArray[1,Abs[distancingDelay]]];
+  ];
 
   distancingFunction = Interpolation[
     Transpose[{
