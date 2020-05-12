@@ -4,7 +4,7 @@
 the input/output schema used by the unified modelling UI. *)
 
 (* Exit whenever an error message is raised. *)
-messageHandler = If[Last[#], Abort[]] &;
+messageHandler = If[Last[#], Exit[1]] &;
 Internal`AddHandler["Message", messageHandler];
 
 (* Command-line arguments: <inputFile> <outputFile> *)
@@ -116,7 +116,7 @@ translateInput[modelInput_]:=Module[{
 
   (* TODO: These are copied from modules in data.wl,
   and should be shared instead. *)
-  smoothing = 3;
+  smoothing = 7;
   SlowJoin := Fold[Module[{smoother},
       smoother=1-Exp[-Range[Length[#2]]/smoothing];
       Join[#1, Last[#1](1-smoother)+#2 smoother]]&];
@@ -127,6 +127,14 @@ translateInput[modelInput_]:=Module[{
   On[Assert];
   Assert[Length[fullDistancing] == Length[fullDays]];
   Off[Assert];
+
+  distancingDelay = 5;
+  Which[
+    distancingDelay>0,
+    smoothedFullDistancing=Join[ConstantArray[1,distancingDelay], smoothedFullDistancing[[;;-distancingDelay-1]]];,
+    distancingDelay<0,
+    smoothedFullDistancing=Join[smoothedFullDistancing[[distancingDelay+1;;]], ConstantArray[1,Abs[distancingDelay]]];
+  ];
 
   distancingFunction = Interpolation[
     Transpose[{
@@ -241,11 +249,12 @@ Print["Running model"];
 CreateDirectory["public/json/"<>stateCode<>"/"<>scenario1["id"]];
 CreateDirectory["public/json/"<>stateCode<>"/"<>customScenario["id"]];
 CreateDirectory["tests"];
-data = GenerateModelExport[10, {stateCode}];
+data = GenerateModelExport[1, {stateCode}];
 
 Print["Translating output for unified UI"];
 timeSeriesData = data[stateCode]["scenarios"][customScenario["id"]]["timeSeriesData"];
 modelOutput = translateOutput[modelInput, stateCode, timeSeriesData];
 
 Print["Writing output for unified UI to ", outputFile];
+Export[DirectoryName[outputFile] <> "/rawTimeSeries.json", timeSeriesData];
 Export[outputFile, modelOutput];
