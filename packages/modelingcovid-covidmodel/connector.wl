@@ -4,7 +4,7 @@
 the input/output schema used by the unified modelling UI. *)
 
 (* Exit whenever an error message is raised. *)
-messageHandler = If[Last[#], Abort[]] &;
+messageHandler = If[Last[#], Exit[1]] &;
 Internal`AddHandler["Message", messageHandler];
 
 (* Command-line arguments: <inputFile> <outputFile> *)
