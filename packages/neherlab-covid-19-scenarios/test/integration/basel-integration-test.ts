@@ -2,7 +2,7 @@ import * as path from 'path'
 import * as temp from 'temp'
 import * as fs from 'fs'
 import { assert } from 'chai'
-import { input, ModelSlug } from '@covid-modeling/api'
+import { input } from '@covid-modeling/api'
 import { BaselModel } from '../../src/basel'
 import { BIN_DIR, MODEL_DATA_DIR } from '../../src/config'
 
