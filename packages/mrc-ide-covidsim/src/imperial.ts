@@ -48,7 +48,8 @@ export class ImperialModel implements Model {
   /** Gets the path to the administrative units parameter file for the given region. */
   private getAdminPath(region: string, subregion?: string): string {
     if (COUNTRY_PARAMS_BY_ISO_CODE[region]) {
-      const adminFileName = COUNTRY_PARAMS_BY_ISO_CODE[region].subregions[subregion]
+      const adminFileName =
+        COUNTRY_PARAMS_BY_ISO_CODE[region].subregions[subregion]
           ?.adminFileName ?? COUNTRY_PARAMS_BY_ISO_CODE[region].adminFileName
       return path.join(this.dataDir, 'admin_units', adminFileName)
     } else {
