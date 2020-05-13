@@ -238,6 +238,8 @@ export function assignAdminParameters(p: {}, subregionName: string) {
   p['List of level 1 administrative units to include'] = subregionName
 
   // For now, we need to remove unused entries from the admin unit name lookup table.
+  // Note: The way filter is used assumes the the entry is an [[]], but if it is a single line it
+  // will only be [] and the filter will fail. Be careful which admin files you use this with.
   const adminUnitNameLookup = p[
     'Codes and country/province names for admin units'
   ].filter(row => row[2] === subregionName)

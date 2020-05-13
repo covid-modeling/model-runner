@@ -6,7 +6,7 @@ import { convertOutput } from './convert-output'
 import * as params from './imperial-params'
 import { logger } from './logger'
 import { RunnerModelInput, Model } from './model'
-import { COUNTRY_PARAMS_BY_ISO_CODE, US_SUBREGIONS } from './admin-mappings'
+import { COUNTRY_PARAMS_BY_ISO_CODE } from './mappings'
 
 // These are taken from the imperial model's regression test
 const SEEDS = ['98798150', '729101', '17389101', '4797132']
@@ -46,12 +46,14 @@ export class ImperialModel implements Model {
   }
 
   /** Gets the path to the administrative units parameter file for the given region. */
-  private getAdminPath(region: string): string {
-    if (region === 'US') {
-      return path.join(this.dataDir, 'admin_units', 'United_States_admin.txt')
-    } else if (COUNTRY_PARAMS_BY_ISO_CODE[region]) {
-      const { adminFileName } = COUNTRY_PARAMS_BY_ISO_CODE[region]
-      return path.join(this.dataDir, 'admin_units', adminFileName)
+  private getAdminPath(region: string, subregion?: string): string {
+    if (COUNTRY_PARAMS_BY_ISO_CODE[region]) {
+      return path.join(
+        this.dataDir,
+        'admin_units',
+        COUNTRY_PARAMS_BY_ISO_CODE[region].subregions[subregion]
+          ?.adminFileName ?? COUNTRY_PARAMS_BY_ISO_CODE[region].adminFileName
+      )
     } else {
       throw new Error(`Could not find admin file for region ${region}`)
     }
@@ -62,20 +64,16 @@ export class ImperialModel implements Model {
    * Europe is used as the default.
    */
   private getPopulationDensityPath(region: string, subregion?: string): string {
-    let populationDensityFileName: string
-    if (
-      ['AS', 'GU', 'PR', 'VI'].includes(region) ||
-      (region === 'US' &&
-        ['US-AK', 'US-HI', 'US-AS', 'US-GU', 'US-PR', 'US-VI'].includes(
-          subregion
-        ))
-    ) {
-      populationDensityFileName = 'wpop_us_terr.txt'
-    } else if (['US', 'CA'].includes(region)) {
-      populationDensityFileName = 'wpop_usacan.txt'
-    } else {
-      populationDensityFileName = 'wpop_eur.txt'
-    }
+    // if (
+    //   ['AS', 'GU', 'PR', 'VI'].includes(region) ||
+    //   (region === 'US' &&
+    //     ['US-AK', 'US-HI', 'US-AS', 'US-GU', 'US-PR', 'US-VI'].includes(
+    //       subregion
+    //     ))
+    const populationDensityFileName =
+      COUNTRY_PARAMS_BY_ISO_CODE[region]?.subregions[subregion]
+        ?.populationDensityFileName ??
+      COUNTRY_PARAMS_BY_ISO_CODE[region]?.populationDensityFileName
     return path.join(this.dataDir, 'populations', populationDensityFileName)
   }
 
@@ -84,27 +82,22 @@ export class ImperialModel implements Model {
    * The UK is used as the default for known regions.
    */
   private getPreParametersTemplatePath(region: string): string {
-    let preParamsFileName: string
-    if (region === 'US') {
-      preParamsFileName = 'preUS_R0=2.0.txt'
-    } else if (COUNTRY_PARAMS_BY_ISO_CODE[region]) {
-      preParamsFileName =
-        COUNTRY_PARAMS_BY_ISO_CODE[region].preParamsFileName ??
-        'preUK_R0=2.0.txt'
+    if (COUNTRY_PARAMS_BY_ISO_CODE[region]) {
+      return path.join(
+        this.dataDir,
+        'param_files',
+        COUNTRY_PARAMS_BY_ISO_CODE[region].preParamsFileName
+      )
     } else {
       throw new Error(
         `Could not find pre-parameters template file for region ${region}`
       )
     }
-    return path.join(this.dataDir, 'param_files', preParamsFileName)
   }
 
   private getSubregionName(region: string, subregion: string): string {
-    if (region === 'US') {
-      return US_SUBREGIONS[subregion]
-    } else if (COUNTRY_PARAMS_BY_ISO_CODE[region]) {
-      const { subregions } = COUNTRY_PARAMS_BY_ISO_CODE[region]
-      return subregions[subregion]
+    if (COUNTRY_PARAMS_BY_ISO_CODE[region]) {
+      return COUNTRY_PARAMS_BY_ISO_CODE[region]?.subregions[subregion]?.name
     } else {
       throw new Error(`Could not find subregions for region ${region}`)
     }
@@ -116,7 +109,7 @@ export class ImperialModel implements Model {
     const modelPath = path.join(this.binDir, 'CovidSim')
 
     // Select the correct static inputs based on the region.
-    let adminPath = this.getAdminPath(input.region)
+    let adminPath = this.getAdminPath(input.region, input.subregion)
     const populationDensityPath = this.getPopulationDensityPath(
       input.region,
       input.subregion
@@ -152,7 +145,12 @@ export class ImperialModel implements Model {
     const parametersContent = params.serialize(parameters)
     fs.writeFileSync(parametersPath, parametersContent, 'utf8')
 
-    if (subregionName) {
+    // We only want to modify the admin file for subregions that don't have their own admin file.
+    if (
+      subregionName &&
+      COUNTRY_PARAMS_BY_ISO_CODE[input.region]?.subregions[input.subregion]
+        ?.adminFileName === undefined
+    ) {
       inputFiles.push(adminPath)
       const editedAdminFile = path.join(this.inputDir, 'admin-params.txt')
       const adminText = fs.readFileSync(adminPath, 'utf8')
