@@ -1,6 +1,6 @@
 ARG MC19_VERSION=latest
 # This image is based on https://github.com/arnoudbuzing/wolfram-engine-docker.
-FROM docker.pkg.github.com/covid-modeling/model-runner/mc19:${MC19_VERSION} AS build
+FROM docker.pkg.github.com/modelingcovid/covidmodel/mc19:${MC19_VERSION} AS build
 
 # The model repo code in the image is at this location,
 # which is used when resolving relative paths.
