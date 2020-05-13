@@ -1,11 +1,100 @@
-import * as temp from 'temp'
 import * as fs from 'fs'
+import * as path from 'path'
+import * as temp from 'temp'
 import { assert } from 'chai'
 import { ImperialModel } from '../../src/imperial'
 import { BIN_DIR, MODEL_DATA_DIR } from '../../src/config'
 import { input } from '@covid-modeling/api'
 
 suite('imperial integration', () => {
+  const testRegions = [
+    {
+      region: 'CA',
+      subregion: undefined,
+      expectedAdminPath: 'Canada_admin.txt',
+      expectedPopulationDensityPath: 'wpop_usacan.txt',
+      expectedPreParameterPath: 'preUK_R0=2.0.txt',
+    },
+    {
+      region: 'NG',
+      subregion: undefined,
+      expectedAdminPath: 'Nigeria_admin.txt',
+      expectedPopulationDensityPath: 'wpop_eur.txt',
+      expectedPreParameterPath: 'preNG_R0=2.0.txt',
+    },
+    {
+      region: 'RU',
+      subregion: undefined,
+      expectedAdminPath: 'Russia_admin.txt',
+      expectedPopulationDensityPath: 'wpop_eur.txt',
+      expectedPreParameterPath: 'preUK_R0=2.0.txt',
+    },
+    {
+      region: 'GB',
+      subregion: undefined,
+      expectedAdminPath: 'United_Kingdom_admin.txt',
+      expectedPopulationDensityPath: 'wpop_eur.txt',
+      expectedPreParameterPath: 'preUK_R0=2.0.txt',
+    },
+    {
+      region: 'US',
+      subregion: undefined,
+      expectedAdminPath: 'United_States_admin.txt',
+      expectedPopulationDensityPath: 'wpop_usacan.txt',
+      expectedPreParameterPath: 'preUS_R0=2.0.txt',
+    },
+    {
+      region: 'US',
+      subregion: 'US-NY',
+      expectedAdminPath: 'admin-params.txt',
+      expectedPopulationDensityPath: 'wpop_usacan.txt',
+      expectedPreParameterPath: 'preUS_R0=2.0.txt',
+    },
+  ]
+  testRegions.forEach(testRegion => {
+    test(`finds parameter files for region ${testRegion.region} and subregion ${testRegion.subregion}`, () => {
+      const modelInput: input.ModelInput = {
+        region: testRegion.region,
+        subregion: testRegion.subregion,
+        parameters: {
+          calibrationDate: '2020-03-20',
+          calibrationCaseCount: 500,
+          calibrationDeathCount: 120,
+          r0: null,
+          interventionPeriods: [],
+        },
+      }
+
+      const logDir = temp.mkdirSync()
+      const inputDir = temp.mkdirSync()
+      const outputDir = temp.mkdirSync()
+      const binDir = temp.mkdirSync()
+
+      const model = new ImperialModel(
+        1,
+        binDir,
+        logDir,
+        MODEL_DATA_DIR,
+        inputDir,
+        outputDir
+      )
+
+      const runnerModelInput = model.inputs(modelInput)
+      assert.equal(
+        runnerModelInput.adminFilePath,
+        path.join(inputDir, testRegion.expectedAdminPath)
+      )
+      assert.equal(
+        runnerModelInput.populationDensityFilePath,
+        path.join(
+          MODEL_DATA_DIR,
+          'populations',
+          testRegion.expectedPopulationDensityPath
+        )
+      )
+    })
+  })
+
   test('run imperial model for Wyoming', async () => {
     const logDir = temp.mkdirSync()
     const inputDir = temp.mkdirSync()

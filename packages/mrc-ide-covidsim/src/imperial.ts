@@ -45,63 +45,91 @@ export class ImperialModel implements Model {
     this.threadCount = threadCount
   }
 
+  /** Gets the path to the administrative units parameter file for the given region. */
+  private getAdminPath(region: string): string {
+    if (region === 'US') {
+      return path.join(this.dataDir, 'admin_units', 'United_States_admin.txt')
+    } else if (COUNTRY_PARAMS_BY_ISO_CODE[region]) {
+      const { adminFileName } = COUNTRY_PARAMS_BY_ISO_CODE[region]
+      return path.join(this.dataDir, 'admin_units', adminFileName)
+    } else {
+      throw new Error(`Could not find admin file for region ${region}`)
+    }
+  }
+
+  /**
+   * Gets the path to the population density parameter file for the given region.
+   * Europe is used as the default.
+   */
+  private getPopulationDensityPath(region: string, subregion?: string): string {
+    let populationDensityFileName: string
+    if (
+      ['AS', 'GU', 'PR', 'VI'].includes(region) ||
+      (region === 'US' &&
+        ['US-AK', 'US-HI', 'US-AS', 'US-GU', 'US-PR', 'US-VI'].includes(
+          subregion
+        ))
+    ) {
+      populationDensityFileName = 'wpop_us_terr.txt'
+    } else if (['US', 'CA'].includes(region)) {
+      populationDensityFileName = 'wpop_usacan.txt'
+    } else {
+      populationDensityFileName = 'wpop_eur.txt'
+    }
+    return path.join(this.dataDir, 'populations', populationDensityFileName)
+  }
+
+  /**
+   * Gets the path to the pre-parameters template file for the given region.
+   * The UK is used as the default for known regions.
+   */
+  private getPreParametersTemplatePath(region: string): string {
+    let preParamsFileName: string
+    if (region === 'US') {
+      preParamsFileName = 'preUS_R0=2.0.txt'
+    } else if (COUNTRY_PARAMS_BY_ISO_CODE[region]) {
+      preParamsFileName =
+        COUNTRY_PARAMS_BY_ISO_CODE[region].preParamsFileName ??
+        'preUK_R0=2.0.txt'
+    } else {
+      throw new Error(
+        `Could not find pre-parameters template file for region ${region}`
+      )
+    }
+    return path.join(this.dataDir, 'param_files', preParamsFileName)
+  }
+
+  private getSubregionName(region: string, subregion: string): string {
+    if (region === 'US') {
+      return US_SUBREGIONS[subregion]
+    } else if (COUNTRY_PARAMS_BY_ISO_CODE[region]) {
+      const { subregions } = COUNTRY_PARAMS_BY_ISO_CODE[region]
+      return subregions[subregion]
+    } else {
+      throw new Error(`Could not find subregions for region ${region}`)
+    }
+  }
+
   inputs(input: input.ModelInput): ImperialRunnerModelInput {
     const inputFiles = []
-    // Select the correct executable and static inputs based on the region.
-    let adminPath,
-      populationDensityPath,
-      preParametersTemplatePath,
-      subregionName
 
     const modelPath = path.join(this.binDir, 'CovidSim')
 
+    // Select the correct static inputs based on the region.
+    let adminPath = this.getAdminPath(input.region)
+    const populationDensityPath = this.getPopulationDensityPath(
+      input.region,
+      input.subregion
+    )
     const parametersTemplatePath = path.join(
       this.dataDir,
       'param_files',
       'p_NoInt.txt'
     )
-
-    // The US has its own executable, population density file, and pre-params file.
-    if (input.region === 'US') {
-      adminPath = path.join(
-        this.dataDir,
-        'admin_units',
-        'United_States_admin.txt'
-      )
-      populationDensityPath = path.join(
-        this.dataDir,
-        'populations',
-        'wpop_usacan.txt'
-      )
-      preParametersTemplatePath = path.join(
-        this.dataDir,
-        'param_files',
-        'preUS_R0=2.0.txt'
-      )
-      subregionName = US_SUBREGIONS[input.subregion]
-    } else if (COUNTRY_PARAMS_BY_ISO_CODE[input.region]) {
-      const { adminFileName, subregions } = COUNTRY_PARAMS_BY_ISO_CODE[
-        input.region
-      ]
-
-      adminPath = path.join(this.dataDir, 'admin_units', adminFileName)
-      populationDensityPath = path.join(
-        this.dataDir,
-        'populations',
-        'wpop_eur.txt'
-      )
-
-      const preParamsFileName =
-        COUNTRY_PARAMS_BY_ISO_CODE[input.region].preParamsFileName ??
-        'preUK_R0=2.0.txt'
-
-      preParametersTemplatePath = path.join(
-        this.dataDir,
-        'param_files',
-        preParamsFileName
-      )
-      subregionName = subregions[input.subregion]
-    }
+    const preParametersTemplatePath = this.getPreParametersTemplatePath(
+      input.region
+    )
+    const subregionName = this.getSubregionName(input.region, input.subregion)
 
     // Generate the intervention-related pre-parameters based on the input.
     inputFiles.push(preParametersTemplatePath)
