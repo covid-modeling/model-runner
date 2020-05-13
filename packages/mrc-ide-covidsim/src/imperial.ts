@@ -64,12 +64,6 @@ export class ImperialModel implements Model {
    * Europe is used as the default.
    */
   private getPopulationDensityPath(region: string, subregion?: string): string {
-    // if (
-    //   ['AS', 'GU', 'PR', 'VI'].includes(region) ||
-    //   (region === 'US' &&
-    //     ['US-AK', 'US-HI', 'US-AS', 'US-GU', 'US-PR', 'US-VI'].includes(
-    //       subregion
-    //     ))
     const populationDensityFileName =
       COUNTRY_PARAMS_BY_ISO_CODE[region]?.subregions[subregion]
         ?.populationDensityFileName ??

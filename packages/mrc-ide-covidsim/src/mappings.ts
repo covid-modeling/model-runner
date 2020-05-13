@@ -319,6 +319,26 @@ export const COUNTRY_PARAMS_BY_ISO_CODE = {
       'US-WI': { name: 'Wisconsin' },
       'US-WY': { name: 'Wyoming' },
       'US-DC': { name: 'District_of_Columbia' },
+      'US-AS': {
+        name: 'American_Samoa',
+        adminFileName: 'American_Samoa_admin.txt',
+        populationDensityFileName: 'wpop_us_terr.txt',
+      },
+      'US-GU': {
+        name: 'Guam',
+        adminFileName: 'Guam_admin.txt',
+        populationDensityFileName: 'wpop_us_terr.txt',
+      },
+      'US-PR': {
+        name: 'Puerto_Rico',
+        adminFileName: 'Puerto_Rico_admin.txt',
+        populationDensityFileName: 'wpop_us_terr.txt',
+      },
+      'US-VI': {
+        name: 'Virgin_Islands_US',
+        adminFileName: 'Virgin_Islands_US_admin.txt',
+        populationDensityFileName: 'wpop_us_terr.txt',
+      },
     },
   },
 }
