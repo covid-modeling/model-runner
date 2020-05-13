@@ -48,12 +48,9 @@ export class ImperialModel implements Model {
   /** Gets the path to the administrative units parameter file for the given region. */
   private getAdminPath(region: string, subregion?: string): string {
     if (COUNTRY_PARAMS_BY_ISO_CODE[region]) {
-      return path.join(
-        this.dataDir,
-        'admin_units',
-        COUNTRY_PARAMS_BY_ISO_CODE[region].subregions[subregion]
+      const adminFileName = COUNTRY_PARAMS_BY_ISO_CODE[region].subregions[subregion]
           ?.adminFileName ?? COUNTRY_PARAMS_BY_ISO_CODE[region].adminFileName
-      )
+      return path.join(this.dataDir, 'admin_units', adminFileName)
     } else {
       throw new Error(`Could not find admin file for region ${region}`)
     }
@@ -61,7 +58,6 @@ export class ImperialModel implements Model {
 
   /**
    * Gets the path to the population density parameter file for the given region.
-   * Europe is used as the default.
    */
   private getPopulationDensityPath(region: string, subregion?: string): string {
     const populationDensityFileName =
@@ -73,7 +69,6 @@ export class ImperialModel implements Model {
 
   /**
    * Gets the path to the pre-parameters template file for the given region.
-   * The UK is used as the default for known regions.
    */
   private getPreParametersTemplatePath(region: string): string {
     if (COUNTRY_PARAMS_BY_ISO_CODE[region]) {

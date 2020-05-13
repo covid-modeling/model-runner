@@ -1,4 +1,6 @@
-// ISO-3166
+// Mappings from ISO-3166 codes to corresponding CovidSim region and parameter file names.
+// Most mappings are region-specific.
+// For pre-parameter template files, the UK is used as the default where a specific file is not available.
 export const COUNTRY_PARAMS_BY_ISO_CODE = {
   AT: {
     adminFileName: 'Austria_admin.txt',
