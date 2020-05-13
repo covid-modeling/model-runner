@@ -19,7 +19,7 @@ suite('imperial integration', () => {
       region: 'NG',
       subregion: undefined,
       expectedAdminPath: 'Nigeria_admin.txt',
-      expectedPopulationDensityPath: 'wpop_eur.txt',
+      expectedPopulationDensityPath: 'wpop_nga_adm1.txt',
       expectedPreParameterPath: 'preNG_R0=2.0.txt',
     },
     {

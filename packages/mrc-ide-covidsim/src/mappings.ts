@@ -251,7 +251,7 @@ export const COUNTRY_PARAMS_BY_ISO_CODE = {
   NG: {
     adminFileName: 'Nigeria_admin.txt',
     preParamsFileName: 'preNGA_R0=2.0.txt',
-    populationDensityFileName: 'wpop_eur.txt',
+    populationDensityFileName: 'wpop_nga_adm1.txt',
     subregions: {},
   },
   US: {
