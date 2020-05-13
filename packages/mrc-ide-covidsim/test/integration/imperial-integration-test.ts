@@ -19,7 +19,7 @@ suite('imperial integration', () => {
       region: 'NG',
       subregion: undefined,
       expectedAdminPath: 'Nigeria_admin.txt',
-      expectedPopulationDensityPath: 'wpop_eur.txt',
+      expectedPopulationDensityPath: 'wpop_nga_adm1.txt',
       expectedPreParameterPath: 'preNG_R0=2.0.txt',
     },
     {
@@ -48,6 +48,13 @@ suite('imperial integration', () => {
       subregion: 'US-NY',
       expectedAdminPath: 'admin-params.txt',
       expectedPopulationDensityPath: 'wpop_usacan.txt',
+      expectedPreParameterPath: 'preUS_R0=2.0.txt',
+    },
+    {
+      region: 'US',
+      subregion: 'US-HI',
+      expectedAdminPath: 'Hawaii_admin.txt',
+      expectedPopulationDensityPath: 'wpop_us_terr.txt',
       expectedPreParameterPath: 'preUS_R0=2.0.txt',
     },
   ]
@@ -217,6 +224,83 @@ suite('imperial integration', () => {
     // Input params are saved
     const inputFilenames = fs.readdirSync(inputDir)
     assert.include(inputFilenames, 'admin-params.txt')
+    assert.include(inputFilenames, 'input-params.txt')
+  }).timeout(80000)
+
+  test('run imperial model for Hawaii', async () => {
+    const logDir = temp.mkdirSync()
+    const inputDir = temp.mkdirSync()
+    const outputDir = temp.mkdirSync()
+
+    const model = new ImperialModel(
+      4,
+      BIN_DIR,
+      logDir,
+      MODEL_DATA_DIR,
+      inputDir,
+      outputDir
+    )
+
+    const modelInput: input.ModelInput = {
+      region: 'US',
+      subregion: 'US-HI',
+      parameters: {
+        calibrationDate: '2020-04-05',
+        calibrationDeathCount: 50,
+        calibrationCaseCount: 150,
+        r0: null,
+        interventionPeriods: [
+          {
+            startDate: '2020-03-15',
+            reductionPopulationContact: 9,
+            socialDistancing: input.Intensity.Moderate,
+          },
+          {
+            startDate: '2020-03-21',
+            reductionPopulationContact: 9,
+            socialDistancing: input.Intensity.Moderate,
+            schoolClosure: input.Intensity.Aggressive,
+          },
+          {
+            startDate: '2020-03-25',
+            reductionPopulationContact: 9,
+            socialDistancing: input.Intensity.Aggressive,
+            schoolClosure: input.Intensity.Aggressive,
+          },
+          {
+            startDate: '2020-05-01',
+            reductionPopulationContact: 9,
+            socialDistancing: input.Intensity.Moderate,
+            schoolClosure: input.Intensity.Mild,
+          },
+          {
+            startDate: '2020-06-01',
+            reductionPopulationContact: 9,
+          },
+        ],
+      },
+    }
+
+    const runInput = model.inputs(modelInput)
+    const output = await model.run(runInput)
+
+    // Time info
+    const timestepCount = output.time.timestamps.length
+    assert.equal(output.time.t0, '2020-01-01')
+    for (let i = 1; i < timestepCount; i++) {
+      assert.equal(
+        output.time.timestamps[i],
+        output.time.timestamps[i - 1] + 1,
+        'Expected timestamps to be sequential'
+      )
+    }
+
+    // Metrics names
+    checkMetrics(output.aggregate.metrics, timestepCount)
+
+    // Input params are saved
+    const inputFilenames = fs.readdirSync(inputDir)
+    assert.include(inputFilenames, 'Hawaii_admin.txt')
     assert.include(inputFilenames, 'input-params.txt')
   }).timeout(80000)
 
