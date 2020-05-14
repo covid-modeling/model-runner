@@ -69,6 +69,16 @@ suite('converting to Basel model input', () => {
       subregion: undefined,
       scenarioKey: 'United Kingdom of Great Britain and Northern Ireland',
     },
+    {
+      region: 'RU',
+      subregion: undefined,
+      scenarioKey: 'Russian Federation',
+    },
+    {
+      region: 'CA',
+      subregion: undefined,
+      scenarioKey: 'Canada',
+    },
   ]
 
   // Update test regions with the two r0 possibilities:
