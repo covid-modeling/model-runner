@@ -19,6 +19,8 @@ suite('basel integration', () => {
     { region: 'GB', subregion: undefined, t0: '2020-02-09' },
     { region: 'DE', subregion: undefined, t0: '2020-02-06' },
     { region: 'IT', subregion: undefined, t0: '2020-02-02' },
+    { region: 'RU', subregion: undefined, t0: '2020-02-20' },
+    { region: 'CA', subregion: undefined, t0: '2020-02-09' },
   ]
   const testRegions: TestRegion[] = []
   regions.forEach(r => {

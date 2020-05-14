@@ -212,7 +212,7 @@ export const REGION_DATA: RegionMap = {
     alpha3: 'ROU',
   },
   RU: {
-    name: 'Russia',
+    name: 'Russian Federation',
     id: 'RU',
     alpha3: 'RUS',
   },
