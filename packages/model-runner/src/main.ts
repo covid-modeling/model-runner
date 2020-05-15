@@ -131,7 +131,7 @@ async function main() {
     const outputHash = uniqueId(input, imageId)
 
     logger.info('uploading model results to blob storage.')
-    await Promise.all([
+    const results = await Promise.allSettled([
       storage.uploadFile(outputFile, outputHash, true),
       storage.uploadFile(exportZipFile, outputHash, true),
       storage.uploadOutputDir(outputHash, LOG_DIR, false),
@@ -149,15 +149,29 @@ async function main() {
       true
     )
 
-    if (input.callbackURL) {
-      // FIXME: this is success while we figure out if the model
-      // can fail generating results.
+    // The UI only cares about the outputFile and outputHash, so
+    // we let it know that the run was successful if both were uploaded
+    if (
+      input.callbackURL &&
+      results[0].status === 'fulfilled' &&
+      results[2].status === 'fulfilled'
+    ) {
       await notifyUI(input.callbackURL, RUNNER_SHARED_SECRET, input.id, {
         modelSlug,
         status: RunStatus.Complete,
         resultsLocation: blobStoreOutputFileKey,
         exportLocation: blobStoreExportZipKey,
       })
+    }
+
+    const errors = results.filter(result => result.status === 'rejected')
+    if (errors.length) {
+      logger.error(
+        `Partial success uploading results. The following errors occurred: ${errors
+          .map((e: PromiseRejectedResult) => e.reason)
+          .join('\n')}`
+      )
+      process.exit(1)
     }
   } catch (err) {
     handleRejection(err, Promise.resolve())
