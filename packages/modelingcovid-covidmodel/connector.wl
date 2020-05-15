@@ -54,7 +54,7 @@ Here `distancing` is a rule describing a distancing function,
 which can be placed in the `stateDistancingPrecomputed` structure,
 and `stateCode` is the ISO 2-letter code for the US state being run on.
 *)
-translateInput[modelInput_]:=Module[{
+translateInput[modelInput_, presetData_]:=Module[{
   stateCode,
   interventionPeriods,
   interventionDistancingLevels,
@@ -62,6 +62,11 @@ translateInput[modelInput_]:=Module[{
   interventionEndDateOffsets,
   interventionDistancing,
   fullDistancing,
+  presetDistancingData,
+  distancingRatio,
+  scalingFunction,
+  lastInterventionStartDate,
+  fullDistancingUnadjusted,
   smoothing,
   SlowJoin,
   fullDays,
@@ -91,7 +96,7 @@ translateInput[modelInput_]:=Module[{
   0 = 100% contact reduction/total isolation.
   1 = 0% contact reduction/no distancing.
   *)
-  interventionDistancing = Prepend[
+  interventionDistancingUnadjusted = Prepend[
     MapThread[
       Function[
         {startOffset, endOffset, distancingLevel},
@@ -112,7 +117,63 @@ translateInput[modelInput_]:=Module[{
   ];
 
   (* Flatten the list of lists into a single time series list. *)
-  fullDistancing = Flatten[interventionDistancing];
+  fullDistancingUnadjusted = Flatten[interventionDistancingUnadjusted];
+
+  (* Scale the distancing levels.
+  The scaling is derived from the historical data being passed in and the
+  historical data imported by the model.
+  Create an interpolating function that describes the ratio between these two data series.
+  Then apply that function to extrapolate how to scale intervention levels from the present day onwards.
+  *)
+  (* The pointwise ratios or scaling factors between:
+  - the historical distancing data obtained by the model from its own sources
+  - the historical distancing data passed in from the unified UI. *)
+  Print["Scaling distancing data"];
+  presetDistancingData = presetData[stateCode][scenario5["id"]]["distancingData"];
+  distancingRatio = Take[presetDistancingData/fullDistancingUnadjusted, today];
+  Print["Ratio of historical distancing data: ", distancingRatio];
+  (* Fit a function to the scaling factors by interpolation. *)
+  scalingFunction = Interpolation[distancingRatio];
+  (* Scale future distancing levels by extrapolation.
+  This is intended to mitigate variation between the two sources of distancing data.*)
+  lastInterventionStartDate = Last[interventionStartDateOffsets]+1;
+  Print["Last intervention start date: ", lastInterventionStartDate];
+  scale = (If[
+    First[#2] < lastInterventionStartDate,
+    scalingFunction[First[#2]] * #1,
+    (* The last intervention is assumed to be constant
+    (either zero or the last distancing level continued).
+    Polynomial interpolation will eventually diverge from this constant value,
+    so scale by a constant factor for time points in the last intervention period. *)
+    scalingFunction[lastInterventionStartDate] * #1
+  ])&;
+  fullDistancing = MapIndexed[
+    scale,
+    (* TODO this should be done on interventionDistancing so it gets smoothed! *)
+    fullDistancingUnadjusted
+  ];
+
+  scalingIndex = 1;
+  interventionDistancing = {};
+  For[i = 1, i <= Length[interventionDistancingUnadjusted], i++,
+    segment = interventionDistancingUnadjusted[[i]];
+    newSegment = {};
+    For[j = 1, j <= Length[segment], j++,
+      AppendTo[newSegment, scale[segment[[j]], {scalingIndex}]];
+      scalingIndex++;
+    ];
+    AppendTo[interventionDistancing, newSegment];
+  ];
+
+  Print["Last intervention unscaled: ", fullDistancingUnadjusted[[lastInterventionStartDate]]];
+  Print["Last intervention scaled: ", fullDistancing[[lastInterventionStartDate]]];
+  Print["Last scaling factor: ", scalingFunction[lastInterventionStartDate]];
+
+  Print["Last intervention segment unscaled: ", Last[interventionDistancingUnadjusted]];
+  Print["Last intervention segment scaled: ", Last[interventionDistancing]];
+  
+  Print["Unscaled distancing data: ", fullDistancingUnadjusted];
+  Print["Scaled distancing data: ", fullDistancing];
 
   (* TODO: These are copied from modules in data.wl,
   and should be shared instead. *)
@@ -213,7 +274,10 @@ Print["Reading input from unified UI, stored at ", inputFile];
 modelInput = readInputJson[inputFile];
 
 Print["Translating input from unified UI"];
-{customDistancing, stateCode} = translateInput[modelInput];
+{customDistancing, stateCode} = translateInput[
+  modelInput,
+  stateDistancingPrecompute
+];
 Print["Length of distancingDays: ", Length[customDistancing["distancingDays"]]];
 Print["Length of distancingData: ", Length[customDistancing["distancingData"]]];
 Print["The model will be run for: " <> stateCode];
@@ -228,7 +292,7 @@ Print["Adding a custom scenario and distancing function to the precomputed data"
 (* For simplicity, remove all other scenarios,
 except scenario1 which is needed for fitting.
 scenarios=Append[scenarios, customScenario]; *)
-scenarios={scenario1, customScenario};
+scenarios={scenario1, scenario5, customScenario};
 stateDistancingPrecompute[stateCode] = Append[
   stateDistancingPrecompute[stateCode],
   customScenario["id"] -> customDistancing
