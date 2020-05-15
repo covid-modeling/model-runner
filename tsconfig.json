@@ -3,15 +3,9 @@
   "compilerOptions": {
     "rootDir": ".",
     "strict": false,
-    "outDir": "dist"
+    "outDir": "dist",
+    "target": "ES2020"
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "packages/*/dist"
-  ]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["dist", "node_modules", "packages/*/dist"]
 }

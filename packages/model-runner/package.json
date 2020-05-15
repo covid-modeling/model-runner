@@ -17,7 +17,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@azure/identity": "^1.1.0-preview1",
+    "@azure/identity": "^1.1.0-preview.3",
     "@azure/storage-blob": "^12.1.1",
     "@covid-modeling/api": "^0.10.0",
     "archiver": "^4.0.1",

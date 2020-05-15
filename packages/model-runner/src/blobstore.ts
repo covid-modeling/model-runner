@@ -1,4 +1,4 @@
-import { BlobServiceClient, BlockBlobUploadResponse } from '@azure/storage-blob'
+import { BlobServiceClient, ContainerClient } from '@azure/storage-blob'
 import { DefaultAzureCredential } from '@azure/identity'
 import * as fs from 'fs'
 import * as fg from 'fast-glob'
@@ -8,29 +8,20 @@ import { logger } from './logger'
 export class BlobStorage {
   storageAccount: string
   containerName: string
-  private client
+  private client: ContainerClient
 
   constructor(storageAccount: string, containerName: string) {
     this.storageAccount = storageAccount
     this.containerName = containerName
-    this.client = this.getClient().getContainerClient(this.containerName)
+    this.client = this.getServiceClient().getContainerClient(this.containerName)
   }
 
-  private getClient(): BlobServiceClient {
+  private getServiceClient(): BlobServiceClient {
     const cred = new DefaultAzureCredential()
     return new BlobServiceClient(
       `https://${this.storageAccount}.blob.core.windows.net`,
       cred
     )
-  }
-
-  private upload(
-    key: string,
-    content: string
-  ): Promise<BlockBlobUploadResponse> {
-    const blobClient = this.client.getBlobClient(key)
-    const blockBlobClient = blobClient.getBlockBlobClient()
-    return blockBlobClient.upload(content, content.length)
   }
 
   async uploadFile(file: string, keyPrefix: string, isPublic: boolean) {
@@ -39,7 +30,9 @@ export class BlobStorage {
     const blobClient = this.client.getBlobClient(key)
     const blockBlobClient = blobClient.getBlockBlobClient()
     // FIXME Some kind of error handling?
-    await blockBlobClient.uploadFile(file)
+    await blockBlobClient.uploadFile(file, {
+      concurrency: 1,
+    })
   }
 
   async uploadOutputDir(dirKey: string, dir: string, isPublic: boolean) {
@@ -66,7 +59,9 @@ export class BlobStorage {
         const blobClient = this.client.getBlobClient(key)
         const blockBlobClient = blobClient.getBlockBlobClient()
         // FIXME Some kind of error handling?
-        await blockBlobClient.uploadFile(globEntry.path)
+        await blockBlobClient.uploadFile(globEntry.path, {
+          concurrency: 1,
+        })
       }
     }
   }
