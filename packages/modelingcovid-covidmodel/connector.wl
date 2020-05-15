@@ -74,9 +74,23 @@ translateInput[modelInput_, presetData_]:=Module[{
   distancingFunction
 },
   (* Only US states are currently supported *)
-  (* If[modelInput["region"] != "US", "US", Throw["Only US states are currently supported."]]; *)
+  connector::unsupportedRegion = "Only the US region is currently supported. Received `1`";
+  If[
+    modelInput["region"] != "US",
+    Message[connector::unsupportedRegion, modelInput["region"]],
+    ""
+  ];
+  Print[modelInput["region"]];
   (* Drop the US- prefix *)
   stateCode = StringDrop[modelInput["subregion"], 3];
+
+  (* Only some US states are supported. Check against the precomputed model data. *)
+  connector::unsupportedSubregion = "Subregion `1` is the state `2`, which is not currently supported.";
+  Print[!KeyExistsQ[presetData, stateCode]];
+  If[
+    !KeyExistsQ[presetData, stateCode],
+    Message[connector::unsupportedSubregion, modelInput["subregion"], stateCode]
+  ];
 
   interventionPeriods = modelInput["parameters"]["interventionPeriods"];
   (* Here we use the estimated reduction in population contact from the input.
