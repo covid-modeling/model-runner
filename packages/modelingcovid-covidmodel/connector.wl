@@ -331,8 +331,12 @@ data = GenerateModelExport[1, {stateCode}];
 
 Print["Translating output for unified UI"];
 timeSeriesData = data[stateCode]["scenarios"][customScenario["id"]]["timeSeriesData"];
+timeSeriesDataS5 = data[stateCode]["scenarios"][scenario5["id"]]["timeSeriesData"];
 modelOutput = translateOutput[modelInput, stateCode, timeSeriesData];
+modelOutputS5 = translateOutput[modelInput, stateCode, timeSeriesDataS5];
 
 Print["Writing output for unified UI to ", outputFile];
 Export[DirectoryName[outputFile] <> "/rawTimeSeries.json", timeSeriesData];
+Export[DirectoryName[outputFile] <> "/rawTimeSeries.s5.json", timeSeriesDataS5];
 Export[outputFile, modelOutput];
+Export[DirectoryName[outputFile] <> "/data.s5.json", modelOutputS5];
