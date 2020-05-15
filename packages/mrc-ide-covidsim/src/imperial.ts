@@ -183,7 +183,6 @@ export class ImperialModel implements Model {
       `/P:${input.parametersFilePath}`,
       `/O:${this.outputDir}/result`,
       `/R:${r0 / 2.0}`,
-      `/S:${this.outputDir}/${input.modelInput.region}-${input.subregionName}-network.bin`,
 
       // TODO - cache the intermediate network files
       // '/S:NetworkUKN_32T_100th.bin',
