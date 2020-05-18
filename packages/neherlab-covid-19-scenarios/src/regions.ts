@@ -302,6 +302,62 @@ export const REGION_DATA: RegionMap = {
   FR: {
     name: 'France',
     alpha3: 'FRA',
+    regions: {
+      'FR-ARA': {
+        name: 'Auvergne-Rhône-Alpes',
+      },
+      'FR-BFC': {
+        name: 'Bourgogne-Franche-Comté',
+      },
+      'FR-BRE': {
+        name: 'Bretagne',
+      },
+      'FR-CVL': {
+        name: 'Centre-Val-de-Loire',
+      },
+      'FR-COR': {
+        name: 'Corse',
+      },
+      'FR-GES': {
+        name: 'Grand-Est',
+      },
+      'FR-GUA': {
+        name: 'Guadeloupe',
+      },
+      'FR-GF': {
+        name: 'Guyane',
+      },
+      'FR-HDF': {
+        name: 'Hauts-de-France',
+      },
+      'FR-IDF': {
+        name: 'Ile-de-France',
+      },
+      'FR-LRE': {
+        name: 'La-Réunion',
+      },
+      'FR-MQ': {
+        name: 'Martinique',
+      },
+      'FR-MAY': {
+        name: 'Mayotte',
+      },
+      'FR-NOR': {
+        name: 'Normandie',
+      },
+      'FR-NAQ': {
+        name: 'Nouvelle-Aquitaine',
+      },
+      'FR-OCC': {
+        name: 'Occitanie',
+      },
+      'FR-PDL': {
+        name: 'Pays-de-la-Loire',
+      },
+      'FR-PAC': {
+        name: 'Provence-Alpes-Côte-dAzur',
+      },
+    },
   },
   GA: {
     name: 'Gabon',
@@ -428,6 +484,116 @@ export const REGION_DATA: RegionMap = {
   IN: {
     name: 'India',
     alpha3: 'IND',
+    regions: {
+      'IN-AN': {
+        name: 'Andaman & Nicobar Islands',
+      },
+      'IN-AP': {
+        name: 'Andhra Pradesh',
+      },
+      'IN-AR': {
+        name: 'Arunachal Pradesh',
+      },
+      'IN-AS': {
+        name: 'Assam',
+      },
+      'IN-BR': {
+        name: 'Bihar',
+      },
+      'IN-CH': {
+        name: 'Chandigarh',
+      },
+      'IN-CT': {
+        name: 'Chhattisgarh',
+      },
+      'IN-DN': {
+        name: 'Dadra & Nagar Haveli',
+      },
+      'IN-DD': {
+        name: 'Daman & Diu',
+      },
+      'IN-DL': {
+        name: 'Delhi',
+      },
+      'IN-GA': {
+        name: 'Goa',
+      },
+      'IN-GJ': {
+        name: 'Gujarat',
+      },
+      'IN-HR': {
+        name: 'Haryana',
+      },
+      'IN-HP': {
+        name: 'Himachal Pradesh',
+      },
+      'IN-JK': {
+        name: 'Jammu and Kashmir',
+      },
+      'IN-JH': {
+        name: 'Jharkhand',
+      },
+      'IN-KA': {
+        name: 'Karnataka',
+      },
+      'IN-KL': {
+        name: 'Kerala',
+      },
+      'IN-LD': {
+        name: 'Lakshadweep',
+      },
+      'IN-MP': {
+        name: 'Madhya Pradesh',
+      },
+      'IN-MH': {
+        name: 'Maharashtra',
+      },
+      'IN-MN': {
+        name: 'Manipur',
+      },
+      'IN-ML': {
+        name: 'Meghalaya',
+      },
+      'IN-MZ': {
+        name: 'Mizoram',
+      },
+      'IN-NL': {
+        name: 'Nagaland',
+      },
+      'IN-OR': {
+        name: 'Odisha',
+      },
+      'IN-PY': {
+        name: 'Puducherry',
+      },
+      'IN-PB': {
+        name: 'Punjab',
+      },
+      'IN-RJ': {
+        name: 'Rajasthan',
+      },
+      'IN-SK': {
+        name: 'Sikkim',
+      },
+      'IN-TN': {
+        name: 'Tamil Nadu',
+      },
+      'IN-TH': {
+        name: 'Telangana',
+      },
+      'IN-TR': {
+        name: 'Tripura',
+      },
+      'IN-UP': {
+        name: 'Uttar Pradesh',
+      },
+      'IN-UT': {
+        name: 'Uttarakhand',
+      },
+      'IN-WB': {
+        name: 'West Bengal',
+      },
+    },
   },
   ID: {
     name: 'Indonesia',
@@ -452,6 +618,74 @@ export const REGION_DATA: RegionMap = {
   IT: {
     name: 'Italy',
     alpha3: 'ITA',
+    regions: {
+      'IT-65': {
+        name: 'Abruzzo',
+      },
+      'IT-77': {
+        name: 'Basilicata',
+      },
+      'IT-78': {
+        name: 'Calabria',
+      },
+      'IT-72': {
+        name: 'Campania',
+      },
+      'IT-45': {
+        name: 'Emilia-Romagna',
+      },
+      'IT-36': {
+        name: 'Friuli Venezia Giulia',
+      },
+      'IT-62': {
+        name: 'Lazio',
+      },
+      'IT-42': {
+        name: 'Liguria',
+      },
+      'IT-25': {
+        name: 'Lombardia',
+      },
+      'IT-57': {
+        name: 'Marche',
+      },
+      'IT-67': {
+        name: 'Molise',
+      },
+      'IT-BZ': {
+        name: 'P.A. Bolzano',
+      },
+      'IT-TN': {
+        name: 'P.A. Trento',
+      },
+      'IT-21': {
+        name: 'Piemonte',
+      },
+      'IT-75': {
+        name: 'Puglia',
+      },
+      'IT-88': {
+        name: 'Sardegna',
+      },
+      'IT-82': {
+        name: 'Sicilia',
+      },
+      'IT-52': {
+        name: 'Toscana',
+      },
+      'IT-32': {
+        name: 'TrentinoAltoAdige',
+      },
+      'IT-55': {
+        name: 'Umbria',
+      },
+      'IT-23': {
+        name: "Valle d'Aosta",
+      },
+      'IT-34': {
+        name: 'Veneto',
+      },
+    },
   },
   JM: {
     name: 'Jamaica',
@@ -460,6 +694,11 @@ export const REGION_DATA: RegionMap = {
   JP: {
     name: 'Japan',
     alpha3: 'JPN',
+    regions: {
+      'JP-47': {
+        name: 'Okinawa',
+      },
+    },
   },
   JO: {
     name: 'Jordan',
@@ -652,6 +891,59 @@ export const REGION_DATA: RegionMap = {
   PH: {
     name: 'Philippines',
     alpha3: 'PHL',
+    regions: {
+      'PH-14': {
+        name: 'BARMM',
+      },
+      'PH-15': {
+        name: 'CAR (Cordillera Administrative Region)',
+      },
+      'PH-00': {
+        name: 'NCR',
+      },
+      'PH-01': {
+        name: 'Region 1 (Ilocos Region)',
+      },
+      'PH-10': {
+        name: 'Region 10 (Northern Mindanao)',
+      },
+      'PH-11': {
+        name: 'Region 11 (Davao Region)',
+      },
+      'PH-12': {
+        name: 'Region 12 (Soccskargen)',
+      },
+      'PH-13': {
+        name: 'Region 13 (Caraga)',
+      },
+      'PH-02': {
+        name: 'Region 2 (Cagayan Valley)',
+      },
+      'PH-03': {
+        name: 'Region 3 (Central Luzon)',
+      },
+      'PH-40': {
+        name: 'Region 4A (Calabarzon)',
+      },
+      'PH-41': {
+        name: 'Region 4B (MIMAROPA)',
+      },
+      'PH-05': {
+        name: 'Region 5 (Bicol Region)',
+      },
+      'PH-06': {
+        name: 'Region 6 (Western Visayas)',
+      },
+      'PH-07': {
+        name: 'Region 7 (Central Visayas)',
+      },
+      'PH-08': {
+        name: 'Region 8 (Eastern Visayas)',
+      },
+      'PH-09': {
+        name: 'Region 9 (Zamboanga Peninsula)',
+      },
+    },
   },
   PL: {
     name: 'Poland',
@@ -811,6 +1103,11 @@ export const REGION_DATA: RegionMap = {
   SE: {
     name: 'Sweden',
     alpha3: 'SWE',
+    regions: {
+      'SE-AB': {
+        name: 'Stockholm',
+      },
+    },
   },
   CH: {
     name: 'Switzerland',
