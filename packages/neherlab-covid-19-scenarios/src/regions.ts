@@ -27,14 +27,6 @@ export interface Region {
   name: string
 
   /**
-   * The ISO 3166 code for the region
-   *
-   * This may be a 3166-1 or 3166-2 (subregion) dependeing on what level we're
-   * at.
-   */
-  id: string
-
-  /**
    * The ISO 3166-1 alpha-3 three-letter code for the region
    */
   alpha3?: string
@@ -46,420 +38,1114 @@ export interface Region {
 }
 
 export const REGION_DATA: RegionMap = {
-  GB: {
-    name: 'Great Britain',
-    id: 'GB',
-    alpha3: 'GBR',
-  },
-  AT: {
-    name: 'Austria',
-    id: 'AT',
-    alpha3: 'AUT',
+  AF: {
+    name: 'Afghanistan',
+    alpha3: 'AFG',
   },
   AL: {
     name: 'Albania',
-    id: 'AL',
     alpha3: 'ALB',
+  },
+  DZ: {
+    name: 'Algeria',
+    alpha3: 'DZA',
+  },
+  AD: {
+    name: 'Andorra',
+    alpha3: 'AND',
+  },
+  AG: {
+    name: 'Antigua and Barbuda',
+    alpha3: 'ATG',
+  },
+  AR: {
+    name: 'Argentina',
+    alpha3: 'ARG',
+  },
+  AM: {
+    name: 'Armenia',
+    alpha3: 'ARM',
+  },
+  AU: {
+    name: 'Australia',
+    alpha3: 'AUS',
+  },
+  AT: {
+    name: 'Austria',
+    alpha3: 'AUT',
+  },
+  AZ: {
+    name: 'Azerbaijan',
+    alpha3: 'AZE',
+  },
+  BS: {
+    name: 'Bahamas',
+    alpha3: 'BHS',
+  },
+  BH: {
+    name: 'Bahrain',
+    alpha3: 'BHR',
+  },
+  BD: {
+    name: 'Bangladesh',
+    alpha3: 'BGD',
+  },
+  BB: {
+    name: 'Barbados',
+    alpha3: 'BRB',
   },
   BY: {
     name: 'Belarus',
-    id: 'BY',
     alpha3: 'BLR',
   },
   BE: {
     name: 'Belgium',
-    id: 'BE',
     alpha3: 'BEL',
+  },
+  BZ: {
+    name: 'Belize',
+    alpha3: 'BLZ',
+  },
+  BJ: {
+    name: 'Benin',
+    alpha3: 'BEN',
+  },
+  BT: {
+    name: 'Bhutan',
+    alpha3: 'BTN',
+  },
+  BO: {
+    name: 'Bolivia (Plurinational State of)',
+    alpha3: 'BOL',
   },
   BA: {
     name: 'Bosnia and Herzegovina',
-    id: 'BA',
     alpha3: 'BIH',
+  },
+  BW: {
+    name: 'Botswana',
+    alpha3: 'BWA',
+  },
+  BR: {
+    name: 'Brazil',
+    alpha3: 'BRA',
+  },
+  BN: {
+    name: 'Brunei Darussalam',
+    alpha3: 'BRN',
   },
   BG: {
     name: 'Bulgaria',
-    id: 'BG',
     alpha3: 'BGR',
+  },
+  BF: {
+    name: 'Burkina Faso',
+    alpha3: 'BFA',
+  },
+  BI: {
+    name: 'Burundi',
+    alpha3: 'BDI',
+  },
+  CV: {
+    name: 'Cabo Verde',
+    alpha3: 'CPV',
+  },
+  KH: {
+    name: 'Cambodia',
+    alpha3: 'KHM',
+  },
+  CM: {
+    name: 'Cameroon',
+    alpha3: 'CMR',
   },
   CA: {
     name: 'Canada',
-    id: 'CA',
     alpha3: 'CAN',
+    regions: {
+      'CA-AB': {
+        name: 'Alberta',
+      },
+      'CA-BC': {
+        name: 'British Columbia',
+      },
+      'CA-MB': {
+        name: 'Manitoba',
+      },
+      'CA-NT': {
+        name: 'NWT',
+      },
+      'CA-NB': {
+        name: 'New Brunswick',
+      },
+      'CA-NL': {
+        name: 'Newfoundland and Labrador',
+      },
+      'CA-NS': {
+        name: 'Nova Scotia',
+      },
+      'CA-NU': {
+        name: 'Nunavut',
+      },
+      'CA-ON': {
+        name: 'Ontario',
+      },
+      'CA-PE': {
+        name: 'Prince Edward Island',
+      },
+      'CA-QC': {
+        name: 'Quebec',
+      },
+      'CA-SK': {
+        name: 'Saskatchewan',
+      },
+      'CA-YT': {
+        name: 'Yukon',
+      },
+    },
+  },
+  CF: {
+    name: 'Central African Republic',
+    alpha3: 'CAF',
+  },
+  CL: {
+    name: 'Chile',
+    alpha3: 'CHL',
+  },
+  CN: {
+    name: 'China',
+    alpha3: 'CHN',
+  },
+  CO: {
+    name: 'Colombia',
+    alpha3: 'COL',
+  },
+  KM: {
+    name: 'Comoros',
+    alpha3: 'COM',
+  },
+  CR: {
+    name: 'Costa Rica',
+    alpha3: 'CRI',
   },
   HR: {
     name: 'Croatia',
-    id: 'HR',
     alpha3: 'HRV',
   },
-  CR: {
+  CU: {
+    name: 'Cuba',
+    alpha3: 'CUB',
+  },
+  CY: {
+    name: 'Cyprus',
+    alpha3: 'CYP',
+  },
+  CZ: {
     name: 'Czechia',
-    id: 'CR',
     alpha3: 'CZE',
   },
   DK: {
     name: 'Denmark',
-    id: 'DK',
     alpha3: 'DNK',
+  },
+  DJ: {
+    name: 'Djibouti',
+    alpha3: 'DJI',
+  },
+  DM: {
+    name: 'Dominica',
+    alpha3: 'DMA',
+  },
+  DO: {
+    name: 'Dominican Republic',
+    alpha3: 'DOM',
+  },
+  EC: {
+    name: 'Ecuador',
+    alpha3: 'ECU',
+  },
+  EG: {
+    name: 'Egypt',
+    alpha3: 'EGY',
+  },
+  SV: {
+    name: 'El Salvador',
+    alpha3: 'SLV',
+  },
+  GQ: {
+    name: 'Equatorial Guinea',
+    alpha3: 'GNQ',
   },
   EE: {
     name: 'Estonia',
-    id: 'EE',
     alpha3: 'EST',
+  },
+  SZ: {
+    name: 'Eswatini',
+    alpha3: 'SWZ',
+  },
+  ET: {
+    name: 'Ethiopia',
+    alpha3: 'ETH',
+  },
+  FO: {
+    name: 'Faroe Islands',
+    alpha3: 'FRO',
+  },
+  FJ: {
+    name: 'Fiji',
+    alpha3: 'FJI',
   },
   FI: {
     name: 'Finland',
-    id: 'FI',
     alpha3: 'FIN',
   },
   FR: {
     name: 'France',
-    id: 'FR',
     alpha3: 'FRA',
+  },
+  GA: {
+    name: 'Gabon',
+    alpha3: 'GAB',
+  },
+  GM: {
+    name: 'Gambia',
+    alpha3: 'GMB',
+  },
+  GE: {
+    name: 'Georgia',
+    alpha3: 'GEO',
   },
   DE: {
     name: 'Germany',
-    id: 'DE',
     alpha3: 'DEU',
+    regions: {
+      'DE-BW': {
+        name: 'Baden-Württemberg',
+      },
+      'DE-BY': {
+        name: 'Bayern',
+      },
+      'DE-BE': {
+        name: 'Berlin',
+      },
+      'DE-BB': {
+        name: 'Brandenburg',
+      },
+      'DE-HB': {
+        name: 'Bremen',
+      },
+      'DE-HH': {
+        name: 'Hamburg',
+      },
+      'DE-HE': {
+        name: 'Hessen',
+      },
+      'DE-MV': {
+        name: 'Mecklenburg-Vorpommern',
+      },
+      'DE-NI': {
+        name: 'Niedersachsen',
+      },
+      'DE-NW': {
+        name: 'Nordrhein-Westfalen',
+      },
+      'DE-RP': {
+        name: 'Rheinland-Pfalz',
+      },
+      'DE-SL': {
+        name: 'Saarland',
+      },
+      'DE-SN': {
+        name: 'Sachsen',
+      },
+      'DE-ST': {
+        name: 'Sachsen-Anhalt',
+      },
+      'DE-SH': {
+        name: 'Schleswig-Holstein',
+      },
+      'DE-TH': {
+        name: 'Thüringen',
+      },
+    },
+  },
+  GH: {
+    name: 'Ghana',
+    alpha3: 'GHA',
   },
   GI: {
     name: 'Gibraltar',
-    id: 'GI',
     alpha3: 'GIB',
   },
   GR: {
     name: 'Greece',
-    id: 'GR',
     alpha3: 'GRC',
+  },
+  GL: {
+    name: 'Greenland',
+    alpha3: 'GRL',
+  },
+  GD: {
+    name: 'Grenada',
+    alpha3: 'GRD',
+  },
+  GT: {
+    name: 'Guatemala',
+    alpha3: 'GTM',
+  },
+  GN: {
+    name: 'Guinea',
+    alpha3: 'GIN',
+  },
+  GW: {
+    name: 'Guinea-Bissau',
+    alpha3: 'GNB',
+  },
+  GY: {
+    name: 'Guyana',
+    alpha3: 'GUY',
+  },
+  HT: {
+    name: 'Haiti',
+    alpha3: 'HTI',
+  },
+  HN: {
+    name: 'Honduras',
+    alpha3: 'HND',
+  },
+  HK: {
+    name: 'Hong Kong',
+    alpha3: 'HKG',
   },
   HU: {
     name: 'Hungary',
-    id: 'HU',
     alpha3: 'HUN',
   },
   IS: {
     name: 'Iceland',
-    id: 'IS',
     alpha3: 'ISL',
   },
+  IN: {
+    name: 'India',
+    alpha3: 'IND',
+  },
+  ID: {
+    name: 'Indonesia',
+    alpha3: 'IDN',
+  },
   IR: {
+    name: 'Iran (Islamic Republic of)',
+    alpha3: 'IRN',
+  },
+  IQ: {
+    name: 'Iraq',
+    alpha3: 'IRQ',
+  },
+  IE: {
     name: 'Ireland',
-    id: 'IR',
     alpha3: 'IRL',
+  },
+  IL: {
+    name: 'Israel',
+    alpha3: 'ISR',
   },
   IT: {
     name: 'Italy',
-    id: 'IT',
     alpha3: 'ITA',
+  },
+  JM: {
+    name: 'Jamaica',
+    alpha3: 'JAM',
+  },
+  JP: {
+    name: 'Japan',
+    alpha3: 'JPN',
+  },
+  JO: {
+    name: 'Jordan',
+    alpha3: 'JOR',
+  },
+  KZ: {
+    name: 'Kazakhstan',
+    alpha3: 'KAZ',
+  },
+  KE: {
+    name: 'Kenya',
+    alpha3: 'KEN',
+  },
+  KI: {
+    name: 'Kiribati',
+    alpha3: 'KIR',
+  },
+  KP: {
+    name: "Korea (Democratic People's Republic of)",
+    alpha3: 'PRK',
+  },
+  KR: {
+    name: 'Korea, Republic of',
+    alpha3: 'KOR',
+  },
+  KW: {
+    name: 'Kuwait',
+    alpha3: 'KWT',
+  },
+  KG: {
+    name: 'Kyrgyzstan',
+    alpha3: 'KGZ',
+  },
+  LA: {
+    name: "Lao People's Democratic Republic",
+    alpha3: 'LAO',
   },
   LV: {
     name: 'Latvia',
-    id: 'LV',
     alpha3: 'LVA',
+  },
+  LB: {
+    name: 'Lebanon',
+    alpha3: 'LBN',
+  },
+  LR: {
+    name: 'Liberia',
+    alpha3: 'LBR',
+  },
+  LY: {
+    name: 'Libya',
+    alpha3: 'LBY',
+  },
+  LI: {
+    name: 'Liechtenstein',
+    alpha3: 'LIE',
   },
   LT: {
     name: 'Lithuania',
-    id: 'LT',
     alpha3: 'LTU',
   },
   LU: {
     name: 'Luxembourg',
-    id: 'LU',
     alpha3: 'LUX',
   },
-  MK: {
-    name: 'Macedonia',
-    id: 'MK',
-    alpha3: 'MKD',
+  MG: {
+    name: 'Madagascar',
+    alpha3: 'MDG',
+  },
+  MW: {
+    name: 'Malawi',
+    alpha3: 'MWI',
+  },
+  MY: {
+    name: 'Malaysia',
+    alpha3: 'MYS',
+  },
+  MV: {
+    name: 'Maldives',
+    alpha3: 'MDV',
+  },
+  ML: {
+    name: 'Mali',
+    alpha3: 'MLI',
   },
   MT: {
     name: 'Malta',
-    id: 'MT',
     alpha3: 'MLT',
   },
+  MH: {
+    name: 'Marshall Islands',
+    alpha3: 'MHL',
+  },
+  MU: {
+    name: 'Mauritius',
+    alpha3: 'MUS',
+  },
+  MX: {
+    name: 'Mexico',
+    alpha3: 'MEX',
+  },
+  FM: {
+    name: 'Micronesia (Federated States of)',
+    alpha3: 'FSM',
+  },
   MD: {
-    name: 'Moldova',
-    id: 'MD',
+    name: 'Moldova, Republic of',
     alpha3: 'MDA',
+  },
+  MC: {
+    name: 'Monaco',
+    alpha3: 'MCO',
+  },
+  MN: {
+    name: 'Mongolia',
+    alpha3: 'MNG',
   },
   ME: {
     name: 'Montenegro',
-    id: 'ME',
     alpha3: 'MNE',
+  },
+  MA: {
+    name: 'Morocco',
+    alpha3: 'MAR',
+  },
+  MZ: {
+    name: 'Mozambique',
+    alpha3: 'MOZ',
+  },
+  MM: {
+    name: 'Myanmar',
+    alpha3: 'MMR',
+  },
+  NA: {
+    name: 'Namibia',
+    alpha3: 'NAM',
+  },
+  NR: {
+    name: 'Nauru',
+    alpha3: 'NRU',
+  },
+  NP: {
+    name: 'Nepal',
+    alpha3: 'NPL',
   },
   NL: {
     name: 'Netherlands',
-    id: 'NL',
     alpha3: 'NLD',
+  },
+  NZ: {
+    name: 'New Zealand',
+    alpha3: 'NZL',
+  },
+  NI: {
+    name: 'Nicaragua',
+    alpha3: 'NIC',
+  },
+  MK: {
+    name: 'North Macedonia',
+    alpha3: 'MKD',
   },
   NO: {
     name: 'Norway',
-    id: 'NO',
     alpha3: 'NOR',
   },
-  PT: {
-    name: 'Portugal',
-    id: 'PT',
-    alpha3: 'PRT',
+  OM: {
+    name: 'Oman',
+    alpha3: 'OMN',
+  },
+  PK: {
+    name: 'Pakistan',
+    alpha3: 'PAK',
+  },
+  PW: {
+    name: 'Palau',
+    alpha3: 'PLW',
+  },
+  PA: {
+    name: 'Panama',
+    alpha3: 'PAN',
+  },
+  PY: {
+    name: 'Paraguay',
+    alpha3: 'PRY',
+  },
+  PE: {
+    name: 'Peru',
+    alpha3: 'PER',
+  },
+  PH: {
+    name: 'Philippines',
+    alpha3: 'PHL',
   },
   PL: {
     name: 'Poland',
-    id: 'PL',
     alpha3: 'POL',
+  },
+  PT: {
+    name: 'Portugal',
+    alpha3: 'PRT',
+  },
+  QA: {
+    name: 'Qatar',
+    alpha3: 'QAT',
   },
   RO: {
     name: 'Romania',
-    id: 'RO',
     alpha3: 'ROU',
   },
   RU: {
     name: 'Russian Federation',
-    id: 'RU',
     alpha3: 'RUS',
+  },
+  KN: {
+    name: 'Saint Kitts and Nevis',
+    alpha3: 'KNA',
+  },
+  LC: {
+    name: 'Saint Lucia',
+    alpha3: 'LCA',
+  },
+  VC: {
+    name: 'Saint Vincent and the Grenadines',
+    alpha3: 'VCT',
+  },
+  SM: {
+    name: 'San Marino',
+    alpha3: 'SMR',
+  },
+  ST: {
+    name: 'Sao Tome and Principe',
+    alpha3: 'STP',
+  },
+  SA: {
+    name: 'Saudi Arabia',
+    alpha3: 'SAU',
+  },
+  SN: {
+    name: 'Senegal',
+    alpha3: 'SEN',
   },
   RS: {
     name: 'Serbia',
-    id: 'RS',
     alpha3: 'SRB',
+  },
+  SC: {
+    name: 'Seychelles',
+    alpha3: 'SYC',
+  },
+  SG: {
+    name: 'Singapore',
+    alpha3: 'SGP',
   },
   SK: {
     name: 'Slovakia',
-    id: 'SK',
     alpha3: 'SVK',
   },
   SI: {
     name: 'Slovenia',
-    id: 'SI',
     alpha3: 'SVN',
+  },
+  SB: {
+    name: 'Solomon Islands',
+    alpha3: 'SLB',
+  },
+  SO: {
+    name: 'Somalia',
+    alpha3: 'SOM',
+  },
+  ZA: {
+    name: 'South Africa',
+    alpha3: 'ZAF',
   },
   ES: {
     name: 'Spain',
-    id: 'ES',
     alpha3: 'ESP',
+    regions: {
+      'ES-AN': {
+        name: 'Andalucía',
+      },
+      'ES-AR': {
+        name: 'Aragón',
+      },
+      'ES-AS': {
+        name: 'Asturias',
+      },
+      'ES-IB': {
+        name: 'Baleares',
+      },
+      'ES-VC': {
+        name: 'C. Valenciana',
+      },
+      'ES-CN': {
+        name: 'Canarias',
+      },
+      'ES-CB': {
+        name: 'Cantabria',
+      },
+      'ES-CL': {
+        name: 'Castilla y León',
+      },
+      'ES-CM': {
+        name: 'Castilla-La Mancha',
+      },
+      'ES-CT': {
+        name: 'Cataluña',
+      },
+      'ES-CE': {
+        name: 'Ceuta',
+      },
+      'ES-EX': {
+        name: 'Extremadura',
+      },
+      'ES-GA': {
+        name: 'Galicia',
+      },
+      'ES-RI': {
+        name: 'La Rioja',
+      },
+      'ES-MD': {
+        name: 'Madrid',
+      },
+      'ES-ML': {
+        name: 'Melilla',
+      },
+      'ES-MC': {
+        name: 'Murcia',
+      },
+      'ES-NC': {
+        name: 'Navarra',
+      },
+      'ES-PV': {
+        name: 'País Vasco',
+      },
+    },
+  },
+  LK: {
+    name: 'Sri Lanka',
+    alpha3: 'LKA',
+  },
+  SD: {
+    name: 'Sudan',
+    alpha3: 'SDN',
+  },
+  SR: {
+    name: 'Suriname',
+    alpha3: 'SUR',
   },
   SE: {
     name: 'Sweden',
-    id: 'SE',
     alpha3: 'SWE',
   },
   CH: {
     name: 'Switzerland',
-    id: 'CH',
     alpha3: 'CHE',
+    regions: {
+      'CH-AG': {
+        name: 'Aargau',
+      },
+      'CH-AR': {
+        name: 'Appenzell Ausserrhoden',
+      },
+      'CH-AI': {
+        name: 'Appenzell Innerrhoden',
+      },
+      'CH-BL': {
+        name: 'Basel-Landschaft',
+      },
+      'CH-BS': {
+        name: 'Basel-Stadt',
+      },
+      'CH-BE': {
+        name: 'Bern',
+      },
+      'CH-FR': {
+        name: 'Fribourg',
+      },
+      'CH-GE': {
+        name: 'Geneva',
+      },
+      'CH-GL': {
+        name: 'Glarus',
+      },
+      'CH-GR': {
+        name: 'Graubünden',
+      },
+      'CH-JU': {
+        name: 'Jura',
+      },
+      'CH-LU': {
+        name: 'Luzern',
+      },
+      'CH-NE': {
+        name: 'Neuchâtel',
+      },
+      'CH-NW': {
+        name: 'Nidwalden',
+      },
+      'CH-OW': {
+        name: 'Obwalden',
+      },
+      'CH-SH': {
+        name: 'Schaffhausen',
+      },
+      'CH-SZ': {
+        name: 'Schwyz',
+      },
+      'CH-SO': {
+        name: 'Solothurn',
+      },
+      'CH-SG': {
+        name: 'St. Gallen',
+      },
+      'CH-TG': {
+        name: 'Thurgau',
+      },
+      'CH-TI': {
+        name: 'Ticino',
+      },
+      'CH-UR': {
+        name: 'Uri',
+      },
+      'CH-VS': {
+        name: 'Valais',
+      },
+      'CH-VD': {
+        name: 'Vaud',
+      },
+      'CH-ZG': {
+        name: 'Zug',
+      },
+      'CH-ZH': {
+        name: 'Zürich',
+      },
+    },
+  },
+  SY: {
+    name: 'Syrian Arab Republic',
+    alpha3: 'SYR',
+  },
+  TW: {
+    name: 'Taiwan, Province of China',
+    alpha3: 'TWN',
+  },
+  TJ: {
+    name: 'Tajikistan',
+    alpha3: 'TJK',
+  },
+  TZ: {
+    name: 'Tanzania, United Republic of',
+    alpha3: 'TZA',
+  },
+  TH: {
+    name: 'Thailand',
+    alpha3: 'THA',
+  },
+  TL: {
+    name: 'Timor-Leste',
+    alpha3: 'TLS',
+  },
+  TG: {
+    name: 'Togo',
+    alpha3: 'TGO',
+  },
+  TO: {
+    name: 'Tonga',
+    alpha3: 'TON',
+  },
+  TT: {
+    name: 'Trinidad and Tobago',
+    alpha3: 'TTO',
+  },
+  TN: {
+    name: 'Tunisia',
+    alpha3: 'TUN',
+  },
+  TR: {
+    name: 'Turkey',
+    alpha3: 'TUR',
+  },
+  TM: {
+    name: 'Turkmenistan',
+    alpha3: 'TKM',
+  },
+  UG: {
+    name: 'Uganda',
+    alpha3: 'UGA',
   },
   UA: {
     name: 'Ukraine',
-    id: 'UA',
     alpha3: 'UKR',
+  },
+  AE: {
+    name: 'United Arab Emirates',
+    alpha3: 'ARE',
+  },
+  GB: {
+    name: 'United Kingdom of Great Britain and Northern Ireland',
+    alpha3: 'GBR',
   },
   US: {
     name: 'United States of America',
-    id: 'US',
     alpha3: 'USA',
+
     regions: {
       'US-AK': {
-        id: 'US-AK',
         name: 'Alaska',
       },
       'US-AL': {
-        id: 'US-AL',
         name: 'Alabama',
       },
       'US-AZ': {
-        id: 'US-AZ',
         name: 'Arizona',
       },
       'US-AR': {
-        id: 'US-AR',
         name: 'Arkansas',
       },
       'US-CA': {
-        id: 'US-CA',
         name: 'California',
       },
       'US-CO': {
-        id: 'US-CO',
         name: 'Colorado',
       },
       'US-CT': {
-        id: 'US-CT',
         name: 'Connecticut',
       },
       'US-DE': {
-        id: 'US-DE',
         name: 'Delaware',
       },
       'US-FL': {
-        id: 'US-FL',
         name: 'Florida',
       },
       'US-GA': {
-        id: 'US-GA',
         name: 'Georgia',
       },
       'US-HI': {
-        id: 'US-HI',
         name: 'Hawaii',
       },
       'US-ID': {
-        id: 'US-ID',
         name: 'Idaho',
       },
       'US-IL': {
-        id: 'US-IL',
         name: 'Illinois',
       },
       'US-IN': {
-        id: 'US-IN',
         name: 'Indiana',
       },
       'US-IA': {
-        id: 'US-IA',
         name: 'Iowa',
       },
       'US-KS': {
-        id: 'US-KS',
         name: 'Kansas',
       },
       'US-KY': {
-        id: 'US-KY',
         name: 'Kentucky',
       },
       'US-LA': {
-        id: 'US-LA',
         name: 'Louisiana',
       },
       'US-ME': {
-        id: 'US-ME',
         name: 'Maine',
       },
       'US-MD': {
-        id: 'US-MD',
         name: 'Maryland',
       },
       'US-MA': {
-        id: 'US-MA',
         name: 'Massachusetts',
       },
       'US-MI': {
-        id: 'US-MI',
         name: 'Michigan',
       },
       'US-MN': {
-        id: 'US-MN',
         name: 'Minnesota',
       },
       'US-MS': {
-        id: 'US-MS',
         name: 'Mississippi',
       },
       'US-MO': {
-        id: 'US-MO',
         name: 'Missouri',
       },
       'US-MT': {
-        id: 'US-MT',
         name: 'Montana',
       },
       'US-NE': {
-        id: 'US-NE',
         name: 'Nebraska',
       },
       'US-NV': {
-        id: 'US-NV',
         name: 'Nevada',
       },
       'US-NH': {
-        id: 'US-NH',
         name: 'New Hampshire',
       },
       'US-NJ': {
-        id: 'US-NJ',
         name: 'New Jersey',
       },
       'US-NM': {
-        id: 'US-NM',
         name: 'New Mexico',
       },
       'US-NY': {
-        id: 'US-NY',
         name: 'New York',
       },
       'US-NC': {
-        id: 'US-NC',
         name: 'North Carolina',
       },
       'US-ND': {
-        id: 'US-ND',
         name: 'North Dakota',
       },
       'US-OH': {
-        id: 'US-OH',
         name: 'Ohio',
       },
       'US-OK': {
-        id: 'US-OK',
         name: 'Oklahoma',
       },
       'US-OR': {
-        id: 'US-OR',
         name: 'Oregon',
       },
       'US-PA': {
-        id: 'US-PA',
         name: 'Pennsylvania',
       },
       'US-RI': {
-        id: 'US-RI',
         name: 'Rhode Island',
       },
       'US-SC': {
-        id: 'US-SC',
         name: 'South Carolina',
       },
       'US-SD': {
-        id: 'US-SD',
         name: 'South Dakota',
       },
       'US-TN': {
-        id: 'US-TN',
         name: 'Tennessee',
       },
       'US-TX': {
-        id: 'US-TX',
         name: 'Texas',
       },
       'US-UT': {
-        id: 'US-UT',
         name: 'Utah',
       },
       'US-VT': {
-        id: 'US-VT',
         name: 'Vermont',
       },
       'US-VA': {
-        id: 'US-VA',
         name: 'Virginia',
       },
       'US-WA': {
-        id: 'US-WA',
         name: 'Washington',
       },
       'US-WV': {
-        id: 'US-WV',
         name: 'West Virginia',
       },
       'US-WI': {
-        id: 'US-WI',
         name: 'Wisconsin',
       },
       'US-WY': {
-        id: 'US-WY',
         name: 'Wyoming',
       },
       'US-DC': {
-        id: 'US-DC',
         name: 'District of Columbia',
       },
     },
+  },
+  UY: {
+    name: 'Uruguay',
+    alpha3: 'URY',
+  },
+  UZ: {
+    name: 'Uzbekistan',
+    alpha3: 'UZB',
+  },
+  VE: {
+    name: 'Venezuela (Bolivarian Republic of)',
+    alpha3: 'VEN',
+  },
+  VN: {
+    name: 'Viet Nam',
+    alpha3: 'VNM',
+  },
+  YE: {
+    name: 'Yemen',
+    alpha3: 'YEM',
+  },
+  ZM: {
+    name: 'Zambia',
+    alpha3: 'ZMB',
+  },
+  ZW: {
+    name: 'Zimbabwe',
+    alpha3: 'ZWE',
   },
 }
