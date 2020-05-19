@@ -131,6 +131,8 @@ async function main() {
     const outputHash = uniqueId(input, imageId)
 
     logger.info('uploading model results to blob storage.')
+    await storage.initializeAuth()
+
     const results = await Promise.allSettled([
       storage.uploadFile(outputFile, outputHash, true),
       storage.uploadFile(exportZipFile, outputHash, true),

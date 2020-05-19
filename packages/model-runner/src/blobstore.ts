@@ -9,6 +9,7 @@ export class BlobStorage {
   storageAccount: string
   containerName: string
   private client: ContainerClient
+  private isAuth: boolean
 
   constructor(storageAccount: string, containerName: string) {
     this.storageAccount = storageAccount
@@ -30,9 +31,7 @@ export class BlobStorage {
     const blobClient = this.client.getBlobClient(key)
     const blockBlobClient = blobClient.getBlockBlobClient()
     // FIXME Some kind of error handling?
-    await blockBlobClient.uploadFile(file, {
-      concurrency: 1,
-    })
+    await blockBlobClient.uploadFile(file)
   }
 
   async uploadOutputDir(dirKey: string, dir: string, isPublic: boolean) {
@@ -59,9 +58,7 @@ export class BlobStorage {
         const blobClient = this.client.getBlobClient(key)
         const blockBlobClient = blobClient.getBlockBlobClient()
         // FIXME Some kind of error handling?
-        await blockBlobClient.uploadFile(globEntry.path, {
-          concurrency: 1,
-        })
+        await blockBlobClient.uploadFile(globEntry.path)
       }
     }
   }
@@ -70,6 +67,14 @@ export class BlobStorage {
     return `simulation-runs/${dirKey}/${
       isPublic ? 'public' : 'private'
     }/${fileName}`
+  }
+
+  async initializeAuth() {
+    if (!this.isAuth) {
+      // see https://github.com/Azure/azure-sdk-for-js/issues/8950#issuecomment-629854244
+      await this.client.getProperties()
+      this.isAuth = true
+    }
   }
 }
 
