@@ -1,30 +1,34 @@
 import { assert } from 'chai'
 import { input, output } from '@covid-modeling/api'
 
-import { AlgorithmResult, Scenario, AllParams } from '../../src/basel-api'
+import {
+  AlgorithmResult,
+  ScenarioData,
+  ScenarioDatum,
+  ScenarioArray,
+} from '../../src/basel-api'
 import { BaselConnector, BaselRunnerModelInput } from '../../src/basel'
 import * as path from 'path'
 import * as fs from 'fs'
 
-const TEST_ALL_PARAMS: AllParams = {
-  containment: {
+const TEST_SCENARIO_DATUM: ScenarioDatum = {
+  mitigation: {
     mitigationIntervals: [],
-    numberPoints: 0,
   },
   epidemiological: {
-    infectiousPeriod: 3.0,
-    latencyTime: 3.0,
-    lengthHospitalStay: 3.0,
-    lengthICUStay: 14.0,
+    infectiousPeriodDays: 3.0,
+    latencyDays: 3.0,
+    hospitalStayDays: 3.0,
+    icuStayDays: 14.0,
     overflowSeverity: 2.0,
     peakMonth: 0,
-    r0: 2.7,
+    r0: { begin: 2.7, end: 2.7 },
     seasonalForcing: 0.0,
   },
   population: {
-    ICUBeds: 2378,
-    cases: 'country name placeholder',
-    country: 'country name placeholder',
+    icuBeds: 2378,
+    caseCountsName: 'country name placeholder',
+    ageDistributionName: 'country name placeholder',
     hospitalBeds: 96000,
     importsPerDay: 0.1,
     initialNumberOfCases: 10,
@@ -34,9 +38,9 @@ const TEST_ALL_PARAMS: AllParams = {
     // Ignored
     numberStochasticRuns: 0,
     simulationTimeRange: {
-      tMin: new Date('2020-04-01'),
+      begin: new Date('2020-04-01'),
       // Ignored
-      tMax: new Date(),
+      end: new Date(),
     },
   },
 }
@@ -129,59 +133,62 @@ suite('converting to Basel model input', () => {
         parameters,
       }
       // Write a default scenario to a file.
-      const scenario: Scenario = {
-        country: r.scenarioKey,
-        allParams: TEST_ALL_PARAMS,
+      const scenario: ScenarioData = {
+        name: r.scenarioKey,
+        data: TEST_SCENARIO_DATUM,
+      }
+      const scenarioArray: ScenarioArray = {
+        all: [scenario],
       }
       const scenarioFile = path.join(dataDir, 'scenarios.json')
-      fs.writeFileSync(scenarioFile, JSON.stringify([scenario]), {
+      fs.writeFileSync(scenarioFile, JSON.stringify(scenarioArray), {
         encoding: 'utf8',
       })
 
       const connector = new BaselConnector(dataDir)
       const specificInput = connector.translateInputIntoModel(generalInput)
 
-      assert.equal(specificInput.country, r.scenarioKey)
+      assert.equal(specificInput.name, r.scenarioKey)
       const expectedR0 = r.r0 ?? 2.7
-      assert.equal(specificInput.allParams.epidemiological.r0, expectedR0)
-      assert.deepEqual(specificInput.allParams.simulation.simulationTimeRange, {
-        tMin: new Date('2020-04-01'),
-        tMax: new Date('2022-03-22'),
+      assert.equal(specificInput.data.epidemiological.r0.begin, expectedR0)
+      assert.equal(specificInput.data.epidemiological.r0.end, expectedR0)
+      assert.deepEqual(specificInput.data.simulation.simulationTimeRange, {
+        begin: new Date('2020-04-01'),
+        end: new Date('2022-03-22'),
       })
-      assert.deepEqual(specificInput.allParams.containment, {
+      assert.deepEqual(specificInput.data.mitigation, {
         mitigationIntervals: [
           {
             color: 'black',
-            id: 'basel-model-social-distancing-general-population',
             name: 'Social distancing - general population',
-            mitigationValue: 50,
+            transmissionReduction: {
+              begin: 50,
+              end: 50,
+            },
             timeRange: {
-              tMin: new Date('2020-04-01'),
-              tMax: new Date('2020-04-08'),
+              begin: new Date('2020-04-01'),
+              end: new Date('2020-04-08'),
             },
           },
           {
             color: 'black',
-            id: 'basel-model-social-distancing-general-population',
             name: 'Social distancing - general population',
-            mitigationValue: 90,
+            transmissionReduction: { begin: 90, end: 90 },
             timeRange: {
-              tMin: new Date('2020-04-08'),
-              tMax: new Date('2020-07-01'),
+              begin: new Date('2020-04-08'),
+              end: new Date('2020-07-01'),
             },
           },
           {
             color: 'black',
-            id: 'basel-model-social-distancing-general-population',
             name: 'Social distancing - general population',
-            mitigationValue: 0,
+            transmissionReduction: { begin: 0, end: 0 },
             timeRange: {
-              tMin: new Date('2020-07-01'),
-              tMax: new Date('2022-03-22'),
+              begin: new Date('2020-07-01'),
+              end: new Date('2022-03-22'),
             },
           },
         ],
-        numberPoints: 0,
       })
     })
   })
@@ -190,9 +197,13 @@ suite('converting to Basel model input', () => {
 suite('converting from Basel model output', () => {
   test('can convert from model output with two timestamps', () => {
     const specificOutput: AlgorithmResult = {
-      deterministic: {
+      trajectory: {
+        // Deliberately blank as these are currently ignored.
+        lower: [],
+        upper: [],
+        percentile: {},
         // Sample data taken from the end of a result sequence.
-        trajectory: [
+        middle: [
           {
             time: 1583366400000,
             current: {
@@ -449,8 +460,11 @@ suite('converting from Basel model output', () => {
           },
         ],
       },
-      stochastic: [],
-      params: null,
+      R0: {
+        lower: [],
+        upper: [],
+        mean: [],
+      },
     }
     const parameters: input.ModelParameters = {
       calibrationDate: '2020-03-15',
