@@ -1,4 +1,5 @@
 # Development
+
 Ref: [README](../README.md#building)
 
 ## Submitting A Job to the Actions Runners
@@ -18,4 +19,3 @@ Example:
 ```sh
 ./bin/submit-run token.json jobInput.json
 ```
-
