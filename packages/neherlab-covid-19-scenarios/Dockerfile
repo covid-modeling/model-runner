@@ -3,7 +3,7 @@ ARG BASEL_VERSION=master
 FROM docker.pkg.github.com/covid-modeling/model-runner/basel:${BASEL_VERSION} AS build
 
 # Create a Basel model executable
-RUN /bin/sh -c 'echo -e "#!/bin/sh\nnode /runner/src/algorithms/cli.js \$@" > /usr/bin/run-basel-model' \
+RUN /bin/sh -c 'echo -e "#!/bin/sh\nyarn babel-node --extensions ".ts" src/algorithms/cli.ts "\$@" > /usr/bin/run-basel-model' \
     && chmod +x /usr/bin/run-basel-model
 
 # Install lerna for project building
@@ -11,7 +11,7 @@ RUN npm install -g lerna
 
 # Copy the Basel model data.
 RUN mkdir -p /model/input \
-  && cp /runner/src/assets/data/scenarios/scenarios.json /model/input/scenarios.json
+  && cp /runner/src/assets/data/scenarios.json /model/input/scenarios.json
 
 WORKDIR /connector
 

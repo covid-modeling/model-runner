@@ -18,18 +18,18 @@ fi
 rm -rf .local/bin
 mkdir -p .local/bin
 CURRENT=$PWD
-cd $BASEL_REPO
-echo "Compiling the Basel model CLI entry point"
+pushd $BASEL_REPO
+echo "Compiling the Basel model schema"
 yarn schema:clean
 yarn schema:totypes
-tsc --esModuleInterop --resolveJsonModule src/algorithms/cli.ts || cd $CURRENT
-echo "Compiled the Basel model CLI entry point"
+echo "Compiled the Basel model schema"
 BASEL_REPO_PATH="$(readlink -f $BASEL_REPO)"
-LOCAL_EXEC_PATH=.local/bin/run-basel-model
-echo -e "#!/bin/bash\n\nnode $BASEL_REPO_PATH/src/algorithms/cli.js \$@" > $LOCAL_EXEC_PATH
+LOCAL_EXEC_PATH=$CURRENT/.local/bin/run-basel-model
+echo -e "#!/bin/bash\n\nyarn babel-node --extensions '.ts' $BASEL_REPO_PATH/src/algorithms/cli.ts  \$@" > $LOCAL_EXEC_PATH
 chmod +x $LOCAL_EXEC_PATH
 echo "Wrote a local executable script to $LOCAL_EXEC_PATH"
+popd
 
 # Copy Basel data for local runs
 mkdir -p data/basel
-cp $BASEL_REPO/src/assets/data/scenarios/scenarios.json data/
+cp $BASEL_REPO/src/assets/data/scenarios.json data/
