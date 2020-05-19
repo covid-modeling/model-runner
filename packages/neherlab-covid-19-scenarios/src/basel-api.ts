@@ -1,70 +1,20 @@
 import { ModelConnector } from './connector-api'
 
-// Input schema. Taken from https://github.com/neherlab/covid19_scenarios/blob/a170135a183f1c98b45c01a75e08b0620af6cdbe/src/algorithms/types/Param.types.ts
-export interface Scenario {
-  allParams: AllParams
-  country: string
+// See https://github.com/neherlab/covid19_scenarios/blob/1.3.5/schemas/
+
+// Input schema
+export interface AgeDistributionArray {
+  all: AgeDistributionData[]
 }
 
-export interface AllParams {
-  containment: ContainmentData
-  epidemiological: EpidemiologicalData
-  population: PopulationData
-  simulation: SimulationData
-}
-
-export interface ContainmentData {
-  mitigationIntervals: MitigationInterval[]
-  numberPoints?: number
-}
-
-export interface MitigationInterval {
-  color: string
-  id: string
-  mitigationValue: number
+export interface AgeDistributionData {
+  data: AgeDistributionDatum[]
   name: string
-  timeRange: DateRange
 }
 
-export interface DateRange {
-  tMax: Date
-  tMin: Date
-}
-
-export interface EpidemiologicalData {
-  infectiousPeriod: number
-  latencyTime: number
-  lengthHospitalStay: number
-  lengthICUStay: number
-  overflowSeverity: number
-  peakMonth: number
-  r0: number
-  seasonalForcing: number
-}
-
-export interface PopulationData {
-  cases: string
-  country: string
-  hospitalBeds: number
-  ICUBeds: number
-  importsPerDay: number
-  initialNumberOfCases: number
-  populationServed: number
-}
-
-export interface SimulationData {
-  numberStochasticRuns: number
-  simulationTimeRange: DateRange
-}
-
-export interface Severity {
+export interface AgeDistributionDatum {
   ageGroup: AgeGroup
-  confirmed: number
-  critical: number
-  fatal: number
-  id: number
-  isolated: number
-  severe: number
+  population: number
 }
 
 export enum AgeGroup {
@@ -79,7 +29,112 @@ export enum AgeGroup {
   The80 = '80+',
 }
 
-// Output schema. Taken from https://github.com/neherlab/covid19_scenarios/blob/3532e67999571c3992bc6e7b7f605e678633a07b/src/algorithms/types/Result.types.ts
+export interface CaseCountsArray {
+  all: CaseCountsData[]
+}
+
+export interface CaseCountsData {
+  data: CaseCountsDatum[]
+  name: string
+}
+
+export interface CaseCountsDatum {
+  cases: number | null
+  deaths?: number | null
+  hospitalized?: number | null
+  icu?: number | null
+  recovered?: number | null
+  time: Date
+}
+
+export interface ScenarioArray {
+  all: ScenarioData[]
+}
+
+export interface ScenarioData {
+  data: ScenarioDatum
+  name: string
+}
+
+export interface ScenarioDatum {
+  epidemiological: ScenarioDatumEpidemiological
+  mitigation: ScenarioDatumMitigation
+  population: ScenarioDatumPopulation
+  simulation: ScenarioDatumSimulation
+}
+
+export interface ScenarioDatumEpidemiological {
+  hospitalStayDays: number
+  icuStayDays: number
+  infectiousPeriodDays: number
+  latencyDays: number
+  overflowSeverity: number
+  peakMonth: number
+  r0: NumericRangeNonNegative
+  seasonalForcing: number
+}
+
+export interface NumericRangeNonNegative {
+  begin: number
+  end: number
+}
+
+export interface ScenarioDatumMitigation {
+  mitigationIntervals: MitigationInterval[]
+}
+
+export interface MitigationInterval {
+  color: string
+  name: string
+  timeRange: DateRange
+  transmissionReduction: PercentageRange
+}
+
+export interface DateRange {
+  begin: Date
+  end: Date
+}
+
+export interface PercentageRange {
+  begin: number
+  end: number
+}
+
+export interface ScenarioDatumPopulation {
+  ageDistributionName: string
+  caseCountsName: string
+  hospitalBeds: number
+  icuBeds: number
+  importsPerDay: number
+  initialNumberOfCases: number
+  populationServed: number
+}
+
+export interface ScenarioDatumSimulation {
+  numberStochasticRuns: number
+  simulationTimeRange: DateRange
+}
+
+export interface SeverityDistributionArray {
+  all: SeverityDistributionData[]
+}
+
+export interface SeverityDistributionData {
+  data: SeverityDistributionDatum[]
+  name: string
+}
+
+export interface SeverityDistributionDatum {
+  ageGroup: AgeGroup
+  confirmed: number
+  critical: number
+  fatal: number
+  isolated: number
+  severe: number
+}
+
+// Output schema
+
 export interface ExposedCurrentData {
   susceptible: Record<string, number>
   exposed: Record<string, number>
@@ -89,61 +144,76 @@ export interface ExposedCurrentData {
   overflow: Record<string, number>
 }
 
-export interface CumulativeData {
+export interface ExposedCumulativeData {
   recovered: Record<string, number>
   hospitalized: Record<string, number>
   critical: Record<string, number>
   fatality: Record<string, number>
 }
 
+export interface TimePoint {
+  t: number
+  y: number
+}
+
+export type TimeSeries = TimePoint[]
+
 // This defines the user-facing data structure
 export interface ExportedTimePoint {
   time: number
   current: ExposedCurrentData
-  cumulative: CumulativeData
+  cumulative: ExposedCumulativeData
 }
 
 export interface ModelFracs {
-  severe: Record<string, number>
-  critical: Record<string, number>
-  fatal: Record<string, number>
-  isolated: Record<string, number>
+  severe: number[]
+  critical: number[]
+  fatal: number[]
+  isolated: number[]
 }
 
 export interface ModelRates {
   latency: number
-  infection: (t: Date) => number
-  recovery: Record<string, number>
-  severe: Record<string, number>
-  discharge: Record<string, number>
-  critical: Record<string, number>
-  stabilize: Record<string, number>
-  fatality: Record<string, number>
-  overflowFatality: Record<string, number>
+  infection: (t: number) => number
+  recovery: number[]
+  severe: number[]
+  discharge: number[]
+  critical: number[]
+  stabilize: number[]
+  fatality: number[]
+  overflowFatality: number[]
 }
 
 export interface ModelParams {
-  ageDistribution: Record<string, number>
-  importsPerDay: Record<string, number>
+  ageDistribution: AgeDistributionDatum[]
+  importsPerDay: number[]
   timeDelta: number
   timeDeltaDays: number
   populationServed: number
   numberStochasticRuns: number
   hospitalBeds: number
-  ICUBeds: number
+  icuBeds: number
   frac: ModelFracs
   rate: ModelRates
 }
 
-export interface UserResult {
-  trajectory: ExportedTimePoint[]
+export interface Trajectory {
+  middle: ExportedTimePoint[]
+  lower: ExportedTimePoint[]
+  upper: ExportedTimePoint[]
+  percentile: Record<number, ExportedTimePoint[]>
+}
+
+export interface TimeSeriesWithRange {
+  mean: TimeSeries
+  lower: TimeSeries
+  upper: TimeSeries
 }
 
 export interface AlgorithmResult {
-  deterministic: UserResult
-  stochastic: UserResult[]
-  params: ModelParams
+  trajectory: Trajectory
+  R0: TimeSeriesWithRange
 }
 
 export interface BaselModelConnector
-  extends ModelConnector<Scenario, AlgorithmResult> {}
+  extends ModelConnector<ScenarioData, AlgorithmResult> {}
