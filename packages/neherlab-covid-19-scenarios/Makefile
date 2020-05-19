@@ -39,3 +39,7 @@ run-local: build
 	mkdir -p log input
 	cp test/test-job.json input/inputFile.json
 	./bin/run-model
+
+.PHONY: export-regions
+export-regions:
+	ts-node script/export-region-yaml.ts
