@@ -1,7 +1,6 @@
 # Default version if the variable is not set. The version in the .env file takes precedence.
 ARG BASEL_VERSION=master
-# FROM docker.pkg.github.com/covid-modeling/model-runner/basel:${BASEL_VERSION} AS build
-FROM basel-test:1.3.6 as build
+FROM docker.pkg.github.com/covid-modeling/model-runner/basel:${BASEL_VERSION} AS build
 
 # Install lerna for project building
 RUN npm install -g lerna
