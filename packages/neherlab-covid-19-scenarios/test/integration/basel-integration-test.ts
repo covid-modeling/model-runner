@@ -5,6 +5,7 @@ import { assert } from 'chai'
 import { input } from '@covid-modeling/api'
 import { BaselModel } from '../../src/basel'
 import { BIN_DIR, MODEL_DATA_DIR } from '../../src/config'
+import { logger } from '../../src/logger'
 
 suite('basel integration', () => {
   interface TestRegion {
@@ -57,6 +58,7 @@ suite('basel integration', () => {
       const logDir = path.join(root, 'log')
       const inputDir = path.join(root, 'input')
       const outputDir = path.join(root, 'output')
+      logger.info('Logging to %s', logDir)
 
       fs.mkdirSync(logDir)
       fs.mkdirSync(inputDir)

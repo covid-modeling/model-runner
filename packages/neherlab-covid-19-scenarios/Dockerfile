@@ -3,7 +3,7 @@ ARG BASEL_VERSION=master
 FROM docker.pkg.github.com/covid-modeling/model-runner/basel:${BASEL_VERSION} AS build
 
 # Create a Basel model executable
-RUN /bin/sh -c 'echo -e "#!/bin/sh\nyarn babel-node --extensions ".ts" src/algorithms/cli.ts "\$@" > /usr/bin/run-basel-model' \
+RUN /bin/sh -c 'echo -e "#!/bin/sh\npushd /runner\nyarn babel-node --extensions \".ts\" src/algorithms/cli.ts \$@\npopd" > /usr/bin/run-basel-model' \
     && chmod +x /usr/bin/run-basel-model
 
 # Install lerna for project building
