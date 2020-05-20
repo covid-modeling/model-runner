@@ -27,16 +27,15 @@ const TEST_SCENARIO_DATUM: ScenarioDatum = {
   },
   population: {
     icuBeds: 2378,
-    caseCountsName: 'country name placeholder',
-    ageDistributionName: 'country name placeholder',
+    caseCountsName: 'country name placeholder for case counts',
+    ageDistributionName: 'country name placeholder for age distribution',
     hospitalBeds: 96000,
     importsPerDay: 0.1,
     initialNumberOfCases: 10,
     populationServed: 24600000,
   },
   simulation: {
-    // Ignored
-    numberStochasticRuns: 0,
+    numberStochasticRuns: 10,
     simulationTimeRange: {
       begin: new Date('2020-04-01'),
       // Ignored
@@ -151,6 +150,11 @@ suite('converting to Basel model input', () => {
       assert.equal(specificInput.name, r.scenarioKey)
       const expectedR0 = r.r0 ?? 2.7
       assert.equal(specificInput.data.epidemiological.r0.begin, expectedR0)
+      assert.equal(
+        specificInput.data.population.ageDistributionName,
+        'country name placeholder for age distribution'
+      )
+      assert.equal(specificInput.data.simulation.numberStochasticRuns, 10)
       assert.equal(specificInput.data.epidemiological.r0.end, expectedR0)
       assert.deepEqual(specificInput.data.simulation.simulationTimeRange, {
         begin: new Date('2020-04-01'),
