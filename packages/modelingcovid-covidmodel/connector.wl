@@ -176,6 +176,10 @@ translateInput[modelInput_, presetData_]:=Module[{
     (* Cannot be less than 0 or greater than 1. *)
     Max[0, Min[1, getScalingFactor[getScalingDate[First[ts]]] * unscaledValue]]
   ];
+
+  (* Turn off warnings about using extrapolation from an interpolating function. *)
+  Off[InterpolatingFunction::dmval];
+
   fullDistancing = MapIndexed[
     scale,
     fullDistancingUnadjusted
@@ -196,6 +200,9 @@ translateInput[modelInput_, presetData_]:=Module[{
   Print["Last intervention unscaled: ", fullDistancingUnadjusted[[lastInterventionStartDate]]];
   Print["Last intervention scaled: ", fullDistancing[[lastInterventionStartDate]]];
   Print["Last scaling factor: ", getScalingFactor[lastInterventionStartDate]];
+
+  (* Turn on warnings about using extrapolation from an interpolating function. *)
+  On[InterpolatingFunction::dmval];
 
   Print["Last intervention segment unscaled: ", Last[interventionDistancingUnadjusted]];
   Print["Last intervention segment scaled: ", Last[interventionDistancing]];
