@@ -173,7 +173,8 @@ translateInput[modelInput_, presetData_]:=Module[{
       Typed[unscaledValue, "Real64"],
       Typed[ts, TypeSpecifier["NumericArray"]["UnsignedInteger32", 1]]
     },
-    getScalingFactor[getScalingDate[First[ts]]] * unscaledValue
+    (* Cannot be less than 0 or greater than 1. *)
+    Max[0, Min[1, getScalingFactor[getScalingDate[First[ts]]] * unscaledValue]]
   ];
   fullDistancing = MapIndexed[
     scale,
@@ -338,8 +339,10 @@ Print["Precomputed distancing data for custom scenario: ", stateDistancingPrecom
 
 Print["Running model"];
 (* Create these directories so the model export can write to them. *)
-CreateDirectory["public/json/"<>stateCode<>"/"<>scenario1["id"]];
-CreateDirectory["public/json/"<>stateCode<>"/"<>customScenario["id"]];
+Map[
+  Function[scenario, CreateDirectory["public/json/"<>stateCode<>"/"<>scenario["id"]]],
+  scenarios
+];
 CreateDirectory["tests"];
 data = GenerateModelExport[1, {stateCode}];
 
