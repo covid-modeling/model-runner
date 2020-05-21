@@ -204,6 +204,9 @@ export function assignParameters(p: {}, input: input.ModelParameters) {
   p['Social distancing start time'] = 0
   p['Duration of social distancing'] = 10000
   p['Trigger incidence per cell for social distancing'] = 1
+  p['Trigger incidence per cell for social distancing over time'] = new Array(
+    input.interventionPeriods.length
+  ).fill(0)
   p[
     'Relative spatial contact rates over time given social distancing'
   ] = input.interventionPeriods.map(p =>

@@ -209,6 +209,12 @@ District_of_Columbia	Florida	Georgia
       'Social distancing start time': 0,
       'Duration of social distancing': 10000,
       'Trigger incidence per cell for social distancing': 1,
+      'Trigger incidence per cell for social distancing over time': [
+        0,
+        0,
+        0,
+        0,
+      ],
       'Relative spatial contact rates over time given social distancing': [
         0.5,
         0.1,
