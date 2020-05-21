@@ -54,7 +54,7 @@ Here `distancing` is a rule describing a distancing function,
 which can be placed in the `stateDistancingPrecomputed` structure,
 and `stateCode` is the ISO 2-letter code for the US state being run on.
 *)
-translateInput[modelInput_]:=Module[{
+translateInput[modelInput_, presetData_]:=Module[{
   stateCode,
   interventionPeriods,
   interventionDistancingLevels,
@@ -62,6 +62,13 @@ translateInput[modelInput_]:=Module[{
   interventionEndDateOffsets,
   interventionDistancing,
   fullDistancing,
+  presetDistancingData,
+  distancingRatio,
+  getScalingDate,
+  getScalingFactor,
+  scale,
+  lastInterventionStartDate,
+  fullDistancingUnadjusted,
   smoothing,
   SlowJoin,
   fullDays,
@@ -69,9 +76,23 @@ translateInput[modelInput_]:=Module[{
   distancingFunction
 },
   (* Only US states are currently supported *)
-  (* If[modelInput["region"] != "US", "US", Throw["Only US states are currently supported."]]; *)
+  connector::unsupportedRegion = "Only the US region is currently supported. Received `1`";
+  If[
+    modelInput["region"] != "US",
+    Message[connector::unsupportedRegion, modelInput["region"]],
+    ""
+  ];
+  Print[modelInput["region"]];
   (* Drop the US- prefix *)
   stateCode = StringDrop[modelInput["subregion"], 3];
+
+  (* Only some US states are supported. Check against the precomputed model data. *)
+  connector::unsupportedSubregion = "Subregion `1` is the state `2`, which is not currently supported.";
+  Print[!KeyExistsQ[presetData, stateCode]];
+  If[
+    !KeyExistsQ[presetData, stateCode],
+    Message[connector::unsupportedSubregion, modelInput["subregion"], stateCode]
+  ];
 
   interventionPeriods = modelInput["parameters"]["interventionPeriods"];
   (* Here we use the estimated reduction in population contact from the input.
@@ -91,7 +112,7 @@ translateInput[modelInput_]:=Module[{
   0 = 100% contact reduction/total isolation.
   1 = 0% contact reduction/no distancing.
   *)
-  interventionDistancing = Prepend[
+  interventionDistancingUnadjusted = Prepend[
     MapThread[
       Function[
         {startOffset, endOffset, distancingLevel},
@@ -107,12 +128,87 @@ translateInput[modelInput_]:=Module[{
     ],
     (* Pre-policy distancing - constant at 1 from 1 Jan 2020 to start of policy.*)
     ConstantArray[1., interventionStartDateOffsets[[1]]]
-    (* TODO: Should we use historical distancing data?
-    Here we assume it is already included in the inputs from the UI.*)
+    (* Here we assume historical data is already included in the inputs from the UI.*)
   ];
 
   (* Flatten the list of lists into a single time series list. *)
-  fullDistancing = Flatten[interventionDistancing];
+  fullDistancingUnadjusted = Flatten[interventionDistancingUnadjusted];
+
+  (* Scale the distancing levels.
+  The scaling is derived from the historical data being passed in and the
+  historical data imported by the model.
+  Create an interpolating function that describes the ratio between these two data series.
+  Then apply that function to extrapolate how to scale intervention levels from the present day onwards.
+  *)
+  Print["Scaling distancing data"];
+  presetDistancingData = presetData[stateCode][scenario5["id"]]["distancingData"];
+
+  (* The pointwise ratios or scaling factors between:
+  - the historical distancing data obtained by the model from its own sources
+  - the historical distancing data passed in from the unified UI. *)
+  On[Assert];
+  Assert[Length[presetDistancingData] == Length[fullDistancingUnadjusted]];
+  Off[Assert];
+  distancingRatio = Take[presetDistancingData/fullDistancingUnadjusted, today];
+  Print["Ratios of historical distancing data: ", distancingRatio];
+  (* Fit a function to the scaling factors by interpolation. *)
+  getScalingFactor = Interpolation[distancingRatio];
+
+  (* Scale future distancing levels by extrapolation.
+  This is intended to mitigate variation between the two sources of distancing data.*)
+  lastInterventionStartDate = Last[interventionStartDateOffsets]+1;
+  Print["Last intervention start date: ", lastInterventionStartDate];
+  (* The last intervention is assumed to be constant
+    (either zero or the last distancing level continued until the end of simulation).
+    An interpolating polynomial function will eventually diverge from this constant value,
+    so for time points in the last intervention period,
+    we calculate how the scaling factor for the start date of that intervention period,
+    and scale constantly by that factor throughout the last intervention.*)
+  getScalingDate = Function[
+    Typed[t, "UnsignedInteger32"],
+    Min[t, lastInterventionStartDate]
+  ];
+  scale = Function[
+    {
+      Typed[unscaledValue, "Real64"],
+      Typed[ts, TypeSpecifier["NumericArray"]["UnsignedInteger32", 1]]
+    },
+    (* Cannot be less than 0 or greater than 1. *)
+    Max[0, Min[1, getScalingFactor[getScalingDate[First[ts]]] * unscaledValue]]
+  ];
+
+  (* Turn off warnings about using extrapolation from an interpolating function. *)
+  Off[InterpolatingFunction::dmval];
+
+  fullDistancing = MapIndexed[
+    scale,
+    fullDistancingUnadjusted
+  ];
+
+  scalingIndex = 1;
+  (* int[][] *)interventionDistancing = {};
+  For[i = 1, i <= Length[interventionDistancingUnadjusted], i++,
+    segment = interventionDistancingUnadjusted[[i]];
+    (* int[] *)newSegment = {};
+    For[j = 1, j <= Length[segment], j++,
+      AppendTo[newSegment, scale[segment[[j]], {scalingIndex}]];
+      scalingIndex++;
+    ];
+    AppendTo[interventionDistancing, newSegment];
+  ];
+
+  Print["Last intervention unscaled: ", fullDistancingUnadjusted[[lastInterventionStartDate]]];
+  Print["Last intervention scaled: ", fullDistancing[[lastInterventionStartDate]]];
+  Print["Last scaling factor: ", getScalingFactor[lastInterventionStartDate]];
+
+  (* Turn on warnings about using extrapolation from an interpolating function. *)
+  On[InterpolatingFunction::dmval];
+
+  Print["Last intervention segment unscaled: ", Last[interventionDistancingUnadjusted]];
+  Print["Last intervention segment scaled: ", Last[interventionDistancing]];
+  
+  Print["Unscaled distancing data: ", fullDistancingUnadjusted];
+  Print["Scaled distancing data: ", fullDistancing];
 
   (* TODO: These are copied from modules in data.wl,
   and should be shared instead. *)
@@ -213,7 +309,10 @@ Print["Reading input from unified UI, stored at ", inputFile];
 modelInput = readInputJson[inputFile];
 
 Print["Translating input from unified UI"];
-{customDistancing, stateCode} = translateInput[modelInput];
+{customDistancing, stateCode} = translateInput[
+  modelInput,
+  stateDistancingPrecompute
+];
 Print["Length of distancingDays: ", Length[customDistancing["distancingDays"]]];
 Print["Length of distancingData: ", Length[customDistancing["distancingData"]]];
 Print["The model will be run for: " <> stateCode];
@@ -226,9 +325,10 @@ So we modify them here, between the two imports.
 customScenario=<|"id"->"customScenario","name"->"Custom", "gradual"->False|>;
 Print["Adding a custom scenario and distancing function to the precomputed data"];
 (* For simplicity, remove all other scenarios,
-except scenario1 which is needed for fitting.
-scenarios=Append[scenarios, customScenario]; *)
-scenarios={scenario1, customScenario};
+except scenario1 which is needed for fitting,
+and scenario5 (Current Indefinite), which is used
+to produce data for comparison and debugging.*)
+scenarios={scenario1, scenario5, customScenario};
 stateDistancingPrecompute[stateCode] = Append[
   stateDistancingPrecompute[stateCode],
   customScenario["id"] -> customDistancing
@@ -246,15 +346,21 @@ Print["Precomputed distancing data for custom scenario: ", stateDistancingPrecom
 
 Print["Running model"];
 (* Create these directories so the model export can write to them. *)
-CreateDirectory["public/json/"<>stateCode<>"/"<>scenario1["id"]];
-CreateDirectory["public/json/"<>stateCode<>"/"<>customScenario["id"]];
+Map[
+  Function[scenario, CreateDirectory["public/json/"<>stateCode<>"/"<>scenario["id"]]],
+  scenarios
+];
 CreateDirectory["tests"];
 data = GenerateModelExport[1, {stateCode}];
 
 Print["Translating output for unified UI"];
 timeSeriesData = data[stateCode]["scenarios"][customScenario["id"]]["timeSeriesData"];
+timeSeriesDataS5 = data[stateCode]["scenarios"][scenario5["id"]]["timeSeriesData"];
 modelOutput = translateOutput[modelInput, stateCode, timeSeriesData];
+modelOutputS5 = translateOutput[modelInput, stateCode, timeSeriesDataS5];
 
 Print["Writing output for unified UI to ", outputFile];
 Export[DirectoryName[outputFile] <> "/rawTimeSeries.json", timeSeriesData];
+Export[DirectoryName[outputFile] <> "/rawTimeSeries.s5.json", timeSeriesDataS5];
 Export[outputFile, modelOutput];
+Export[DirectoryName[outputFile] <> "/data.s5.json", modelOutputS5];
