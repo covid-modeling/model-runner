@@ -178,7 +178,10 @@ District_of_Columbia	Florida	Georgia
       ],
     }
 
-    const p = {}
+    const p: Record<string, number | number[] | number[][]> = {
+      'Trigger incidence per cell for social distancing over time': [100, 100],
+      'Household quarantine trigger incidence per cell': 100000,
+    }
     params.assignParameters(p, parameters)
     assert.deepEqual(p, {
       'Vary efficacies over time': 1,
@@ -192,13 +195,11 @@ District_of_Columbia	Florida	Georgia
       'Change times for levels of social distancing': [0, 9, 19, 29],
 
       'Case isolation start time': 0,
-      'Case isolation trigger incidence per cell': 1,
       'Duration of case isolation policy': 10000,
       'Proportion of detected cases isolated over time': [0.75, 0.9, 0.9, 0.75],
 
       'Household quarantine start time': 0,
       'Duration of household quarantine policy': 10000,
-      'Household quarantine trigger incidence per cell': 1,
       'Household level compliance with quarantine over time': [
         0,
         0.75,
@@ -208,7 +209,6 @@ District_of_Columbia	Florida	Georgia
 
       'Social distancing start time': 0,
       'Duration of social distancing': 10000,
-      'Trigger incidence per cell for social distancing': 1,
       'Relative spatial contact rates over time given social distancing': [
         0.5,
         0.1,
@@ -218,7 +218,6 @@ District_of_Columbia	Florida	Georgia
 
       'Place closure start time': 0,
       'Duration of place closure': 10000,
-      'Trigger incidence per cell for place closure': 1,
       'Proportion of places remaining open after closure by place type over time': [
         [1, 1, 1, 1],
         [0.1, 0.1, 0.1, 1],
@@ -226,6 +225,14 @@ District_of_Columbia	Florida	Georgia
         [1, 1, 1, 1],
       ],
       'Duration of place closure over time': [10000, 10000, 10000, 10000],
+
+      'Trigger incidence per cell for social distancing over time': [
+        0,
+        0,
+        0,
+        0,
+      ],
+      'Household quarantine trigger incidence per cell': 0,
     })
 
     const pp = {}
@@ -237,6 +244,7 @@ District_of_Columbia	Florida	Georgia
       'Day of year trigger is reached': 79,
       'Number of days to accummulate cases/deaths before alert': 1000,
       'Number of deaths accummulated before alert': 120,
+      'Treatment trigger incidence per cell': 0,
     })
   })
 

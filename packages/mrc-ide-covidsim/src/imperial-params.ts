@@ -110,19 +110,26 @@ function daysBetween(t0: DateTime, t1: DateTime): number {
 
 export function assignPreParameters(p: {}, input: input.ModelParameters) {
   const calibrationDate = dateFromAPI(input.calibrationDate)
-
-  p['Day of year trigger is reached'] = daysBetween(day0, calibrationDate)
-  p['Number of days to accummulate cases/deaths before alert'] = 1000
-  p['Number of deaths accummulated before alert'] = input.calibrationDeathCount
-  p['Trigger alert on deaths'] = 1
-  p['Alert trigger starts after interventions'] = 1
-
   const interventionStart =
     input.interventionPeriods.length > 0
       ? dateFromAPI(input.interventionPeriods[0].startDate)
-      : DateTime.fromJSDate(new Date())
+      : DateTime.utc()
 
-  p['Day of year interventions start'] = daysBetween(day0, interventionStart)
+  const calibrationDays = daysBetween(day0, calibrationDate)
+  const interventionStartDays = daysBetween(day0, interventionStart)
+
+  p['Day of year trigger is reached'] = calibrationDays
+  p['Number of days to accummulate cases/deaths before alert'] = 1000
+  p['Number of deaths accummulated before alert'] = input.calibrationDeathCount
+  p['Trigger alert on deaths'] = 1
+
+  p['Day of year interventions start'] = interventionStartDays
+
+  // if calibration date is before first intervention date, set to 0
+  p['Alert trigger starts after interventions'] =
+    calibrationDays < interventionStartDays ? 0 : 1
+
+  p['Treatment trigger incidence per cell'] = 0
 }
 
 export function assignParameters(p: {}, input: input.ModelParameters) {
@@ -138,24 +145,20 @@ export function assignParameters(p: {}, input: input.ModelParameters) {
     'Relative spatial contact rates over time after place closure',
     'Place closure incidence threshold over time',
     'Place closure fractional incidence threshold over time',
-    'Trigger incidence per cell for place closure over time',
     'Relative household contact rates over time after quarantine',
     'Residual place contacts over time after household quarantine by place type',
     'Residual spatial contacts over time after household quarantine',
     'Household level compliance with quarantine over time',
     'Individual level compliance with quarantine over time',
-    'Household quarantine trigger incidence per cell over time',
     'Residual contacts after case isolation over time',
     'Residual household contacts after case isolation over time',
     'Proportion of detected cases isolated over time',
-    'Case isolation trigger incidence per cell over time',
     'Relative place contact rates over time given social distancing by place type',
     'Relative household contact rates over time given social distancing',
     'Relative spatial contact rates over time given social distancing',
     'Relative household contact rates over time given enhanced social distancing',
     'Relative spatial contact rates over time given enhanced social distancing',
     'Relative place contact rates over time given enhanced social distancing by place type',
-    'Trigger incidence per cell for social distancing over time',
   ]) {
     const value = p[key]
     if (value) {
@@ -165,6 +168,17 @@ export function assignParameters(p: {}, input: input.ModelParameters) {
       value.fill(value[0], oldLength)
     }
   }
+
+  // Set all trigger incidences to 0 because we do not support adaptive triggers
+  Object.entries(p)
+    .filter(([key]) => key.includes('rigger incidence'))
+    .forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        p[key] = new Array(periodCount).fill(0)
+      } else {
+        p[key] = 0
+      }
+    })
 
   p['Number of change times for levels of case isolation'] = periodCount
   p['Number of change times for levels of household quarantine'] = periodCount
@@ -183,7 +197,6 @@ export function assignParameters(p: {}, input: input.ModelParameters) {
   // Case isolation
   p['Case isolation start time'] = 0
   p['Duration of case isolation policy'] = 10000
-  p['Case isolation trigger incidence per cell'] = 1
   p[
     'Proportion of detected cases isolated over time'
   ] = input.interventionPeriods.map(p =>
@@ -193,7 +206,6 @@ export function assignParameters(p: {}, input: input.ModelParameters) {
   // Household quarantine
   p['Household quarantine start time'] = 0
   p['Duration of household quarantine policy'] = 10000
-  p['Household quarantine trigger incidence per cell'] = 1
   p[
     'Household level compliance with quarantine over time'
   ] = input.interventionPeriods.map(p =>
@@ -203,7 +215,6 @@ export function assignParameters(p: {}, input: input.ModelParameters) {
   // Social distancing
   p['Social distancing start time'] = 0
   p['Duration of social distancing'] = 10000
-  p['Trigger incidence per cell for social distancing'] = 1
   p[
     'Relative spatial contact rates over time given social distancing'
   ] = input.interventionPeriods.map(p =>
@@ -213,7 +224,6 @@ export function assignParameters(p: {}, input: input.ModelParameters) {
   // School closure
   p['Place closure start time'] = 0
   p['Duration of place closure'] = 10000
-  p['Trigger incidence per cell for place closure'] = 1
   p['Duration of place closure over time'] = new Array(
     input.interventionPeriods.length
   ).fill(10000)
@@ -250,6 +260,7 @@ export function assignAdminParameters(p: {}, subregionName: string) {
       )}`
     )
   }
+
   p['Codes and country/province names for admin units'] = adminUnitNameLookup
 }
 
