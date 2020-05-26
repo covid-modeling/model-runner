@@ -1,4 +1,4 @@
-import { output, input } from '@covid-modeling/api'
+import { input } from '@covid-modeling/api'
 import { DateTime } from 'luxon'
 import * as assert from 'assert'
 
