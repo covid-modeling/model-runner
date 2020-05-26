@@ -125,9 +125,8 @@ export function assignPreParameters(p: {}, input: input.ModelParameters) {
 
   p['Day of year interventions start'] = interventionStartDays
 
-  // if calibration date is before first intervention date, set to 0
-  p['Alert trigger starts after interventions'] =
-    calibrationDays < interventionStartDays ? 0 : 1
+  // This value should always be 1 according to Neil.
+  p['Alert trigger starts after interventions'] = 1
 
   p['Treatment trigger incidence per cell'] = 0
 }

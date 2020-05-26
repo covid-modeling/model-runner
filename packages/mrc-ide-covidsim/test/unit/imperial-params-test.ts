@@ -340,27 +340,4 @@ District_of_Columbia	Florida	Georgia
       0.4,
     ])
   })
-
-  test('handles alert trigger starts before interventions', () => {
-    const parameters = {
-      calibrationDate: '2020-02-20',
-      calibrationCaseCount: 500,
-      calibrationDeathCount: 120,
-      r0: 2.5,
-      interventionPeriods: [
-        // Initial intervention
-        {
-          startDate: '2020-03-01',
-          reductionPopulationContact: 9,
-          caseIsolation: input.Intensity.Moderate,
-          socialDistancing: input.Intensity.Mild,
-        },
-      ],
-    }
-    const pp = {}
-
-    params.assignPreParameters(pp, parameters)
-
-    assert.equal(pp['Alert trigger starts after interventions'], 0)
-  })
 })
