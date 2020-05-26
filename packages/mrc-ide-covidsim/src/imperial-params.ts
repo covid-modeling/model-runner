@@ -170,7 +170,7 @@ export function assignParameters(p: {}, input: input.ModelParameters) {
 
   // Set all trigger incidences to 0 because we do not support adaptive triggers
   Object.entries(p)
-    .filter(([key]) => key.includes('rigger incidence'))
+    .filter(([key]) => key.toLowerCase().includes('trigger incidence'))
     .forEach(([key, value]) => {
       if (Array.isArray(value)) {
         p[key] = new Array(periodCount).fill(0)
