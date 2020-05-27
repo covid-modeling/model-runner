@@ -4,9 +4,12 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as pino from 'pino'
 import * as unzipper from 'unzipper'
-import { logger } from '../../src/logger'
-import { enforceOutputSchema, enforceRunnerInputSchema } from '../../src/schema'
-import { isCovidSimInputFile, parse } from './imperial-params'
+import { logger } from '../logger'
+import {
+  enforceOutputSchema,
+  enforceRunnerInputSchema,
+} from '@covid-modeling/model-runner/dist/src/schema'
+import { parse } from '@covid-modeling/mrc-ide-covidsim/dist/src/imperial-params'
 
 const RUNNER_INPUT_FILENAME = 'runnerInputFile.json'
 const MODEL_INPUT_FILENAME = 'inputFile.json'
@@ -249,3 +252,6 @@ suite('comparing runs', async () => {
     compareModelOutputs(modelOutputs)
   })
 })
+
+export const isCovidSimInputFile = (fileName: string) =>
+  fileName.endsWith('-params.txt')
