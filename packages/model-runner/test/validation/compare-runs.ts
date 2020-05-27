@@ -160,7 +160,15 @@ function compareModelOutputs(modelOutputs: output.ModelOutput[]) {
   const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0)
   const last = (xs: number[]) => xs[xs.length - 1]
   const totalDeaths = modelOutputs.map(o => sum(o.aggregate.metrics.incDeath))
-  assert.approximately(totalDeaths[1], totalDeaths[0], 100, 'Total deaths vary')
+
+  const CUMULATIVE_DEATHS_DIFFERENCE_THRESHOLD = 1000
+  const CUMULATIVE_CASES_DIFFERENCE_THRESHOLD = 1000
+  assert.approximately(
+    totalDeaths[1],
+    totalDeaths[0],
+    CUMULATIVE_DEATHS_DIFFERENCE_THRESHOLD,
+    'Total deaths vary'
+  )
 
   const totalCases = modelOutputs
     .map(o => o.aggregate.metrics)
@@ -173,7 +181,12 @@ function compareModelOutputs(modelOutputs: output.ModelOutput[]) {
       ].map(last)
     )
     .map(sum)
-  assert.approximately(totalCases[1], totalCases[0], 100, 'Total cases vary')
+  assert.approximately(
+    totalCases[1],
+    totalCases[0],
+    CUMULATIVE_CASES_DIFFERENCE_THRESHOLD,
+    'Total cases vary'
+  )
 
   // TODO compare other metrics
 }
