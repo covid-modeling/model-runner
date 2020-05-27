@@ -1,4 +1,4 @@
-name: MRC-IDE CovidSim Connector-Build, Test & Publish Docker
+name: Tools-Build, Test & Publish Docker
 on:
   push:
     paths:
