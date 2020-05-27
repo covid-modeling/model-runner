@@ -2,7 +2,7 @@ import * as d3 from 'd3'
 import { output, input } from '@covid-modeling/api'
 
 export function convertOutput(
-  input: input.ModelInput,
+  modelInput: input.ModelInput,
   tsvContent: string
 ): output.ModelOutput {
   const timestamps = []
@@ -32,7 +32,7 @@ export function convertOutput(
   }
 
   return {
-    metadata: input,
+    metadata: modelInput,
     time: {
       t0: '2020-01-01',
       timestamps,

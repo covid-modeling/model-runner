@@ -70,7 +70,7 @@ suite('basel integration', () => {
         outputDir
       )
 
-      const input: input.ModelInput = {
+      const modelInput: input.ModelInput = {
         region: testRegion.region,
         subregion: testRegion.subregion,
         parameters: {
@@ -87,10 +87,10 @@ suite('basel integration', () => {
         },
       }
 
-      const runInput = model.inputs(input)
+      const runInput = model.inputs(modelInput)
       const output = await model.run(runInput)
 
-      assert.deepEqual(output.metadata, input)
+      assert.deepEqual(output.metadata, modelInput)
 
       // Time info
       const timestepCount = output.time.timestamps.length

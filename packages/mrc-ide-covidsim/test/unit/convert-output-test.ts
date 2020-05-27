@@ -12,7 +12,7 @@ const parameters: input.ModelParameters = {
 
 suite('converting imperial model output to JSON', () => {
   test('returns a time series for each metric', () => {
-    const input = {
+    const testInput = {
       region: 'US',
       subregion: 'US-WY',
       parameters,
@@ -28,9 +28,9 @@ t	S	I	R	incI	Mild	ILI	SARI	Critical	CritRecov	SARIP	CriticalP	CritRecovP	incMild
 5.0000000000	231648.0000000000	83.0000000000	404711.0000000000	5.0000000000	21.0000000000	13.0000000000	2.0000000000	0.0000000000	1.0000000000	1.7761639784	0.4418278572	0.9038681979	1.0000000000	1.0000000000	1.0000000000	0.0000000000	1.0000000000	0.2679661247	0.0541842418	0.9215661582	0.0000000000	0.0000000000	0.0000000000	0.0000000000	173625.0000000000	96527.0000000000	9659.0000000000	2630.0000000000	1293.0000000000	3922.0000000000	0.0000000000	2585.0000000000	1337.0000000000
     `.trim()
 
-    const result = convertOutput(input, tsv)
+    const result = convertOutput(testInput, tsv)
 
-    assert.deepEqual(result.metadata, input)
+    assert.deepEqual(result.metadata, testInput)
     assert.deepEqual(result.time.timestamps, [0, 1, 2, 3, 4, 5])
     assert.deepEqual(result.time.extent, [0, 5])
     assert.deepEqual(result.aggregate.metrics['Mild'], [

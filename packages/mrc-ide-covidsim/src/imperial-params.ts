@@ -108,11 +108,14 @@ function daysBetween(t0: DateTime, t1: DateTime): number {
   return t1.diff(t0, 'days').days
 }
 
-export function assignPreParameters(p: {}, input: input.ModelParameters) {
-  const calibrationDate = dateFromAPI(input.calibrationDate)
+export function assignPreParameters(
+  p: {},
+  modelParameters: input.ModelParameters
+) {
+  const calibrationDate = dateFromAPI(modelParameters.calibrationDate)
   const interventionStart =
-    input.interventionPeriods.length > 0
-      ? dateFromAPI(input.interventionPeriods[0].startDate)
+    modelParameters.interventionPeriods.length > 0
+      ? dateFromAPI(modelParameters.interventionPeriods[0].startDate)
       : DateTime.utc()
 
   const calibrationDays = daysBetween(day0, calibrationDate)
@@ -120,7 +123,8 @@ export function assignPreParameters(p: {}, input: input.ModelParameters) {
 
   p['Day of year trigger is reached'] = calibrationDays
   p['Number of days to accummulate cases/deaths before alert'] = 1000
-  p['Number of deaths accummulated before alert'] = input.calibrationDeathCount
+  p['Number of deaths accummulated before alert'] =
+    modelParameters.calibrationDeathCount
   p['Trigger alert on deaths'] = 1
 
   p['Day of year interventions start'] = interventionStartDays
@@ -131,9 +135,12 @@ export function assignPreParameters(p: {}, input: input.ModelParameters) {
   p['Treatment trigger incidence per cell'] = 0
 }
 
-export function assignParameters(p: {}, input: input.ModelParameters) {
+export function assignParameters(
+  p: {},
+  modelParameters: input.ModelParameters
+) {
   // Intervention timing
-  const periodCount = input.interventionPeriods.length
+  const periodCount = modelParameters.interventionPeriods.length
   if (periodCount === 0) return
   p['Vary efficacies over time'] = 1
 
@@ -184,8 +191,10 @@ export function assignParameters(p: {}, input: input.ModelParameters) {
   p['Number of change times for levels of social distancing'] = periodCount
   p['Number of change times for levels of place closure'] = periodCount
 
-  const interventionsStart = dateFromAPI(input.interventionPeriods[0].startDate)
-  const interventionTimes = input.interventionPeriods.map(i =>
+  const interventionsStart = dateFromAPI(
+    modelParameters.interventionPeriods[0].startDate
+  )
+  const interventionTimes = modelParameters.interventionPeriods.map(i =>
     daysBetween(interventionsStart, dateFromAPI(i.startDate))
   )
   p['Change times for levels of case isolation'] = interventionTimes
@@ -198,8 +207,8 @@ export function assignParameters(p: {}, input: input.ModelParameters) {
   p['Duration of case isolation policy'] = 10000
   p[
     'Proportion of detected cases isolated over time'
-  ] = input.interventionPeriods.map(p =>
-    proportionForIntensity(p.caseIsolation)
+  ] = modelParameters.interventionPeriods.map(period =>
+    proportionForIntensity(period.caseIsolation)
   )
 
   // Household quarantine
@@ -207,8 +216,8 @@ export function assignParameters(p: {}, input: input.ModelParameters) {
   p['Duration of household quarantine policy'] = 10000
   p[
     'Household level compliance with quarantine over time'
-  ] = input.interventionPeriods.map(p =>
-    proportionForIntensity(p.voluntaryHomeQuarantine)
+  ] = modelParameters.interventionPeriods.map(period =>
+    proportionForIntensity(period.voluntaryHomeQuarantine)
   )
 
   // Social distancing
@@ -216,20 +225,22 @@ export function assignParameters(p: {}, input: input.ModelParameters) {
   p['Duration of social distancing'] = 10000
   p[
     'Relative spatial contact rates over time given social distancing'
-  ] = input.interventionPeriods.map(p =>
-    invertProportion(proportionForIntensity(p.socialDistancing))
+  ] = modelParameters.interventionPeriods.map(period =>
+    invertProportion(proportionForIntensity(period.socialDistancing))
   )
 
   // School closure
   p['Place closure start time'] = 0
   p['Duration of place closure'] = 10000
   p['Duration of place closure over time'] = new Array(
-    input.interventionPeriods.length
+    modelParameters.interventionPeriods.length
   ).fill(10000)
   p[
     'Proportion of places remaining open after closure by place type over time'
-  ] = input.interventionPeriods.map(p => {
-    const proportion = invertProportion(proportionForIntensity(p.schoolClosure))
+  ] = modelParameters.interventionPeriods.map(period => {
+    const proportion = invertProportion(
+      proportionForIntensity(period.schoolClosure)
+    )
     return [
       proportion, // primary school
       proportion, // secondary school
