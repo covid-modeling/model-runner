@@ -9,6 +9,7 @@ COPY package.json package-lock.json lerna.json ./
 COPY packages/api ./packages/api/
 COPY packages/model-runner ./packages/model-runner/
 COPY packages/mrc-ide-covidsim ./packages/mrc-ide-covidsim/
+COPY packages/tools ./packages/tools/
 
 RUN lerna bootstrap
 RUN lerna run build

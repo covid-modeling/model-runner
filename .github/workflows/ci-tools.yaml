@@ -17,5 +17,5 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Run tests
-        run: docker build --target test -f packages/tools/Dockerfile .
+        run: docker build --target test -f Dockerfile ../../
 
