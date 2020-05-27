@@ -1,11 +1,11 @@
 {
-  "name": "@covid-modeling/model-runner",
-  "version": "1.2.0",
+  "name": "@covid-modeling/tools",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "scripts": {
     "test": "PATH=$PATH:../../node_modules/.bin && mocha --debug-brk --ui tdd -r ts-node/register test/unit/*-test.ts",
     "integration-test": "PATH=$PATH:../../node_modules/.bin && mocha --debug-brk --ui tdd -r ts-node/register test/integration/*-test.ts",
-    "start": "PATH=$PATH:../../node_modules/.bin && node bin/run-model",
+    "validation": "PATH=$PATH:../../node_modules/.bin && mocha --debug-brk --ui tdd -r ts-node/register src/comparison/compare-runs.ts",
     "build": "PATH=$PATH:../../node_modules/.bin && tsc -p .",
     "watch": "PATH=$PATH:../../node_modules/.bin && tsc -p . --watch",
     "check": "PATH=$PATH:../../node_modules/.bin && gts check",
@@ -17,9 +17,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@azure/identity": "^1.1.0-preview.3",
-    "@azure/storage-blob": "^12.1.1",
     "@covid-modeling/api": "^0.10.0",
+    "@covid-modeling/model-runner": "^1.2.0",
+    "@covid-modeling/mrc-ide-covidsim": "^1.7.0",
     "archiver": "^4.0.1",
     "d3": "^5.15.0",
     "dockerode": "^3.2.0",

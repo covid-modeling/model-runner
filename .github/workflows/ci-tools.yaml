@@ -1,0 +1,21 @@
+name: Tools-Build, Test & Publish Docker
+on:
+  push:
+    paths:
+      - 'packages/tools/**'
+
+jobs:
+  # Run tests.
+  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/tools
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run tests
+        run: docker build --target test -f Dockerfile ../../
+
