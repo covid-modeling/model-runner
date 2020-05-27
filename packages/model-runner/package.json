@@ -5,6 +5,7 @@
   "scripts": {
     "test": "PATH=$PATH:../../node_modules/.bin && mocha --debug-brk --ui tdd -r ts-node/register test/unit/*-test.ts",
     "integration-test": "PATH=$PATH:../../node_modules/.bin && mocha --debug-brk --ui tdd -r ts-node/register test/integration/*-test.ts",
+    "validation": "PATH=$PATH:../../node_modules/.bin && mocha --debug-brk --ui tdd -r ts-node/register test/validation/compare-runs.ts",
     "start": "PATH=$PATH:../../node_modules/.bin && node bin/run-model",
     "build": "PATH=$PATH:../../node_modules/.bin && tsc -p .",
     "watch": "PATH=$PATH:../../node_modules/.bin && tsc -p . --watch",
@@ -28,7 +29,8 @@
     "jsen": "^0.6.6",
     "luxon": "^1.23.0",
     "mkdirp": "^1.0.3",
-    "pino": "^6.1.0"
+    "pino": "^6.1.0",
+    "unzipper": "^0.10.11"
   },
   "repository": {
     "type": "git",
@@ -37,5 +39,8 @@
   },
   "bugs": {
     "url": "https://github.com/covid-modeling/model-runner/issues"
+  },
+  "devDependencies": {
+    "@types/unzipper": "^0.10.3"
   }
 }
