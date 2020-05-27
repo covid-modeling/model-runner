@@ -5,7 +5,7 @@ import { input } from '@covid-modeling/api'
 
 suite('the imperial model parameter format', () => {
   test('parse parameter file', () => {
-    const params = parse(`
+    const testParams = parse(`
 [a number]
 1.0
 ^^ a comment
@@ -26,7 +26,7 @@ suite('the imperial model parameter format', () => {
 4\t5\t6
 `)
 
-    assert.deepEqual(params, {
+    assert.deepEqual(testParams, {
       'a number': 1.0,
       'an array': [1.0, 2.0, 3.0],
       'a number in a new section': 1,

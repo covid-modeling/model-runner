@@ -93,16 +93,16 @@ export class ImperialModel implements Model {
     }
   }
 
-  inputs(input: input.ModelInput): ImperialRunnerModelInput {
+  inputs(modelInput: input.ModelInput): ImperialRunnerModelInput {
     const inputFiles = []
 
     const modelPath = path.join(this.binDir, 'CovidSim')
 
     // Select the correct static inputs based on the region.
-    let adminPath = this.getAdminPath(input.region, input.subregion)
+    let adminPath = this.getAdminPath(modelInput.region, modelInput.subregion)
     const populationDensityPath = this.getPopulationDensityPath(
-      input.region,
-      input.subregion
+      modelInput.region,
+      modelInput.subregion
     )
     const parametersTemplatePath = path.join(
       this.dataDir,
@@ -110,9 +110,12 @@ export class ImperialModel implements Model {
       'p_NoInt.txt'
     )
     const preParametersTemplatePath = this.getPreParametersTemplatePath(
-      input.region
+      modelInput.region
     )
-    const subregionName = this.getSubregionName(input.region, input.subregion)
+    const subregionName = this.getSubregionName(
+      modelInput.region,
+      modelInput.subregion
+    )
 
     // Generate the intervention-related pre-parameters based on the input.
     inputFiles.push(preParametersTemplatePath)
@@ -122,7 +125,7 @@ export class ImperialModel implements Model {
       'utf8'
     )
     const preParameters = params.parse(preParametersTemplate)
-    params.assignPreParameters(preParameters, input.parameters)
+    params.assignPreParameters(preParameters, modelInput.parameters)
     const preParametersContent = params.serialize(preParameters)
     fs.writeFileSync(preParametersPath, preParametersContent, 'utf8')
 
@@ -131,15 +134,16 @@ export class ImperialModel implements Model {
     const parametersPath = path.join(this.inputDir, 'input-params.txt')
     const parametersTemplate = fs.readFileSync(parametersTemplatePath, 'utf8')
     const parameters = params.parse(parametersTemplate)
-    params.assignParameters(parameters, input.parameters)
+    params.assignParameters(parameters, modelInput.parameters)
     const parametersContent = params.serialize(parameters)
     fs.writeFileSync(parametersPath, parametersContent, 'utf8')
 
     // We only want to modify the admin file for subregions that don't have their own admin file.
     if (
       subregionName &&
-      COUNTRY_PARAMS_BY_ISO_CODE[input.region]?.subregions[input.subregion]
-        ?.adminFileName === undefined
+      COUNTRY_PARAMS_BY_ISO_CODE[modelInput.region]?.subregions[
+        modelInput.subregion
+      ]?.adminFileName === undefined
     ) {
       inputFiles.push(adminPath)
       const editedAdminFile = path.join(this.inputDir, 'admin-params.txt')
@@ -161,7 +165,7 @@ export class ImperialModel implements Model {
     inputFiles.push(parametersPath)
 
     return {
-      modelInput: input,
+      modelInput,
       binaryPath: modelPath,
       adminFilePath: adminPath,
       populationDensityFilePath: populationDensityPath,
@@ -172,18 +176,20 @@ export class ImperialModel implements Model {
     }
   }
 
-  async run(input: ImperialRunnerModelInput): Promise<output.ModelOutput> {
-    const r0 = input.modelInput.parameters.r0 ?? 3.0
+  async run(
+    imperialModelInput: ImperialRunnerModelInput
+  ): Promise<output.ModelOutput> {
+    const r0 = imperialModelInput.modelInput.parameters.r0 ?? 3.0
 
     const args = [
       `/c:${this.threadCount}`,
-      `/A:${input.adminFilePath}`,
-      `/D:${input.populationDensityFilePath}`,
-      `/PP:${input.preParametersFilePath}`,
-      `/P:${input.parametersFilePath}`,
+      `/A:${imperialModelInput.adminFilePath}`,
+      `/D:${imperialModelInput.populationDensityFilePath}`,
+      `/PP:${imperialModelInput.preParametersFilePath}`,
+      `/P:${imperialModelInput.parametersFilePath}`,
       `/O:${this.outputDir}/result`,
       `/R:${r0 / 2.0}`,
-      `/S:${this.outputDir}/${input.modelInput.region}-${input.subregionName}-network.bin`,
+      `/S:${this.outputDir}/${imperialModelInput.modelInput.region}-${imperialModelInput.subregionName}-network.bin`,
 
       // TODO - cache the intermediate network files
       // '/S:NetworkUKN_32T_100th.bin',
@@ -198,7 +204,7 @@ export class ImperialModel implements Model {
     const logFd = fs.openSync(logFile, 'a')
 
     // Run the model and wait until it exits.
-    const modelProcess = spawn(input.binaryPath, args, {
+    const modelProcess = spawn(imperialModelInput.binaryPath, args, {
       stdio: ['ignore', logFd, logFd],
     })
     await new Promise((resolve, reject) => {
@@ -207,7 +213,9 @@ export class ImperialModel implements Model {
           resolve()
         } else {
           reject(
-            new Error(`Model '${input.binaryPath}' exited with code ${code}`)
+            new Error(
+              `Model '${imperialModelInput.binaryPath}' exited with code ${code}`
+            )
           )
         }
       })
@@ -215,8 +223,11 @@ export class ImperialModel implements Model {
 
     // Copy input files for storage
     fs.copyFileSync(
-      input.populationDensityFilePath,
-      path.join(this.inputDir, path.basename(input.populationDensityFilePath))
+      imperialModelInput.populationDensityFilePath,
+      path.join(
+        this.inputDir,
+        path.basename(imperialModelInput.populationDensityFilePath)
+      )
     )
 
     const tsv = fs.readFileSync(
@@ -224,6 +235,6 @@ export class ImperialModel implements Model {
       'utf8'
     )
 
-    return convertOutput(input.modelInput, tsv)
+    return convertOutput(imperialModelInput.modelInput, tsv)
   }
 }

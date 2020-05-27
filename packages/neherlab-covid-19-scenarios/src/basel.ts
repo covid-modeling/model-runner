@@ -28,9 +28,9 @@ export class BaselModel implements Model {
     this.connector = new BaselConnector(this.dataDir)
   }
 
-  inputs(input: input.ModelInput): BaselRunnerModelInput {
+  inputs(modelInput: input.ModelInput): BaselRunnerModelInput {
     const inputFile = path.join(this.inputDir, 'basel-input.json')
-    const specificInput = this.connector.translateInputIntoModel(input)
+    const specificInput = this.connector.translateInputIntoModel(modelInput)
     fs.writeFileSync(inputFile, JSON.stringify(specificInput), {
       encoding: 'utf8',
     })
@@ -38,24 +38,26 @@ export class BaselModel implements Model {
     logger.info('created model input file: %s', inputFile)
 
     return {
-      modelInput: input,
+      modelInput,
       binaryPath: path.join(this.binDir, 'run-basel-model'),
       inputFiles: [inputFile],
     }
   }
 
-  async run(input: BaselRunnerModelInput): Promise<output.ModelOutput> {
+  async run(
+    baselModelInput: BaselRunnerModelInput
+  ): Promise<output.ModelOutput> {
     const outputFile = path.join(this.outputDir, 'basel-output.json')
 
     // Setup the log file.
     const logFile = path.join(this.logDir, 'basel.log')
     const logFd = fs.openSync(logFile, 'a')
 
-    const args = input.inputFiles
+    const args = baselModelInput.inputFiles
     args.push(outputFile)
 
     // Run the model and wait until it exits.
-    const modelProcess = spawn(input.binaryPath, args, {
+    const modelProcess = spawn(baselModelInput.binaryPath, args, {
       stdio: ['ignore', logFd, logFd],
     })
     await new Promise((resolve, reject) => {
@@ -64,7 +66,9 @@ export class BaselModel implements Model {
           resolve()
         } else {
           reject(
-            new Error(`Model '${input.binaryPath}' exited with code ${code}`)
+            new Error(
+              `Model '${baselModelInput.binaryPath}' exited with code ${code}`
+            )
           )
         }
       })
@@ -74,7 +78,10 @@ export class BaselModel implements Model {
     const outputData = fs.readFileSync(outputFile, { encoding: 'utf8' })
     const outputDataJson = JSON.parse(outputData) as AlgorithmResult
 
-    return this.connector.translateOutputFromModel(input, outputDataJson)
+    return this.connector.translateOutputFromModel(
+      baselModelInput,
+      outputDataJson
+    )
   }
 }
 
@@ -105,7 +112,7 @@ export class BaselConnector implements BaselModelConnector {
     }
   }
 
-  translateInputIntoModel(input: input.ModelInput): Scenario {
+  translateInputIntoModel(modelInput: input.ModelInput): Scenario {
     const defaultScenariosContents = fs.readFileSync(
       path.join(this.dataDir, 'scenarios.json'),
       'utf8'
@@ -113,8 +120,8 @@ export class BaselConnector implements BaselModelConnector {
     const defaultScenarios = JSON.parse(defaultScenariosContents) as Scenario[]
 
     const scenarioRegionKey = this.getScenarioRegionKey(
-      input.region,
-      input.subregion
+      modelInput.region,
+      modelInput.subregion
     )
 
     // The key is called `country` in the scenario JSON,
@@ -126,7 +133,7 @@ export class BaselConnector implements BaselModelConnector {
       )
     }
 
-    const { interventionPeriods, r0 } = input.parameters
+    const { interventionPeriods, r0 } = modelInput.parameters
 
     // If an r0 is provided, use it.
     // Otherwise use the model's default for the region.
@@ -143,7 +150,7 @@ export class BaselConnector implements BaselModelConnector {
       }
     )
     const firstInterventionDate = DateTime.fromISO(
-      input.parameters.interventionPeriods[0].startDate,
+      modelInput.parameters.interventionPeriods[0].startDate,
       {
         zone: 'utc',
       }
@@ -273,7 +280,7 @@ export class BaselConnector implements BaselModelConnector {
     const outputRegion = {
       metrics: severityMetrics,
     }
-    const output: output.ModelOutput = {
+    const modelOutput: output.ModelOutput = {
       metadata: runInput.modelInput,
       time: {
         t0: t0.toISODate(),
@@ -283,8 +290,8 @@ export class BaselConnector implements BaselModelConnector {
       aggregate: outputRegion,
     }
     logger.info('Basel connector: transformed output')
-    logger.debug(JSON.stringify(output))
-    return output
+    logger.debug(JSON.stringify(modelOutput))
+    return modelOutput
   }
 }
 
