@@ -2,26 +2,17 @@ import { output, RequestInput } from '@covid-modeling/api'
 import { assert } from 'chai'
 import * as fs from 'fs'
 import * as path from 'path'
-import * as pino from 'pino'
 import * as unzipper from 'unzipper'
 import { logger } from '../logger'
 import {
   enforceOutputSchema,
   enforceRunnerInputSchema,
-} from '@covid-modeling/model-runner/dist/src/schema'
-import { parse } from '@covid-modeling/mrc-ide-covidsim/dist/src/imperial-params'
+} from '@covid-modeling/model-runner/src/schema'
+import { parse } from '@covid-modeling/mrc-ide-covidsim/src/imperial-params'
 
 const RUNNER_INPUT_FILENAME = 'runnerInputFile.json'
 const MODEL_INPUT_FILENAME = 'inputFile.json'
 const MODEL_OUTPUT_FILENAME = 'data.json'
-
-const handleRejection: NodeJS.UnhandledRejectionListener = err => {
-  const finalLogger = pino.final(logger)
-  finalLogger.error(err)
-  process.exit(1)
-}
-
-process.on('unhandledRejection', handleRejection)
 
 function getUnzippedResultsPath(tmpDir: string, i: number) {
   return path.join(tmpDir, i.toString())
@@ -194,6 +185,17 @@ function compareModelOutputs(modelOutputs: output.ModelOutput[]) {
   // TODO compare other metrics
 }
 
+async function unzipResults(tmpDir: string, zippedPath: string, i: number) {
+  // Check the file exists, and resolve symlinks.
+  const realZippedPath = await fs.promises.realpath(zippedPath)
+  // Create the destination directory for this index.
+  const dest = getUnzippedResultsPath(tmpDir, i)
+  await fs.promises.mkdir(dest)
+  logger.info(`Extracting results zip ${i} from ${realZippedPath} to ${dest}`)
+  await unzip(realZippedPath, dest)
+  logger.info(`Extracted results zip`)
+}
+
 suite('comparing runs', async () => {
   let tmpDir: string
   suiteSetup(async () => {
@@ -203,6 +205,11 @@ suite('comparing runs', async () => {
     logger.info('Working directory: %s', tmpDir)
   })
   suiteTeardown(async () => {
+    // Remove temporary subdirectories first, since recursive deletion
+    // will fail if they are non-empty.
+    const dirs = await fs.promises.readdir(tmpDir)
+    await Promise.all(dirs.map(dir => fs.promises.rmdir(dir, { recursive: true })))
+    // Remove temporary working directory.
     await fs.promises.rmdir(tmpDir, { recursive: true })
   })
 
@@ -220,16 +227,8 @@ suite('comparing runs', async () => {
     )
     inputZips = [baseResultsZip, comparisonResultsZip]
 
-    // Unzip the given artifacts.
-    for (let i = 0; i < 2; i++) {
-      const inputZipPath = await fs.promises.realpath(inputZips[i])
-      assert.isTrue(fs.existsSync(inputZipPath))
-      const dest = getUnzippedResultsPath(tmpDir, i)
-      await fs.promises.mkdir(dest)
-      logger.info(`Extracting results zip ${i} from ${inputZipPath} to ${dest}`)
-      await unzip(inputZipPath, dest)
-      logger.info(`Extracted results zip`)
-    }
+    // Unzip the given artifacts in parallel.
+    await Promise.all(inputZips.map((inputZip, i) => unzipResults(tmpDir, inputZip, i)))
   }).timeout(10000)
 
   test('comparing run inputs', async () => {

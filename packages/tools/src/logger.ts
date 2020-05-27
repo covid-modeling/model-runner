@@ -1,6 +1,6 @@
 import * as pino from 'pino'
 
 export const logger = pino({
-  name: 'model-runner',
+  name: 'tools',
   level: 'info',
 })
