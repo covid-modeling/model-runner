@@ -5,6 +5,7 @@ import { assert } from 'chai'
 import { ImperialModel } from '../../src/imperial'
 import { BIN_DIR, MODEL_DATA_DIR } from '../../src/config'
 import { input } from '@covid-modeling/api'
+import { parse } from '../../src/imperial-params'
 
 suite('imperial integration', () => {
   const testRegions = [
@@ -227,7 +228,7 @@ suite('imperial integration', () => {
     assert.include(inputFilenames, 'input-params.txt')
   }).timeout(80000)
 
-  test('run imperial model for Hawaii', async () => {
+  test('run imperial model for Hawaii with parameter checking', async () => {
     const logDir = temp.mkdirSync()
     const inputDir = temp.mkdirSync()
     const outputDir = temp.mkdirSync()
@@ -302,6 +303,61 @@ suite('imperial integration', () => {
     const inputFilenames = fs.readdirSync(inputDir)
     assert.include(inputFilenames, 'Hawaii_admin.txt')
     assert.include(inputFilenames, 'input-params.txt')
+
+    // Spot check a few interesting parameters
+    // note that period length is 5, so all of the _over time_ variables
+    // have a top-level array length of 5 to match.
+    const inputParamsText = fs.readFileSync(
+      path.join(inputDir, 'input-params.txt'),
+      'utf8'
+    )
+    const p = parse(inputParamsText)
+    assert.deepEqual(
+      p[
+        'Relative place contact rates over time given enhanced social distancing by place type'
+      ],
+      [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ]
+    )
+
+    assert.deepEqual(p['Place closure incidence threshold'], 0)
+    assert.deepEqual(
+      p[
+        'Relative place contact rate given social distancing by place type after change'
+      ],
+      [0, 0, 0, 0]
+    )
+    assert.deepEqual(
+      p['Proportion compliant with enhanced social distancing by age group'],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    )
+    assert.deepEqual(
+      p[
+        'Relative place contact rate given social distancing by place type after change'
+      ],
+      [0, 0, 0, 0]
+    )
+    assert.deepEqual(
+      p['Trigger incidence per cell for social distancing over time'],
+      [0, 0, 0, 0, 0]
+    )
+    assert.deepEqual(
+      p[
+        'Proportion of places remaining open after closure by place type over time'
+      ],
+      [
+        [1, 1, 1, 1],
+        [0.1, 0.1, 0.1, 1],
+        [0.1, 0.1, 0.1, 1],
+        [0.5, 0.5, 0.5, 1],
+        [1, 1, 1, 1],
+      ]
+    )
   }).timeout(80000)
 
   test('run imperial model for Luxembourg', async () => {

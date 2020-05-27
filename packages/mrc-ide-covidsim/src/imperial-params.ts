@@ -149,8 +149,6 @@ export function assignParameters(
   for (const key of [
     'Relative household contact rates over time after place closure',
     'Relative spatial contact rates over time after place closure',
-    'Place closure incidence threshold over time',
-    'Place closure fractional incidence threshold over time',
     'Relative household contact rates over time after quarantine',
     'Residual place contacts over time after household quarantine by place type',
     'Residual spatial contacts over time after household quarantine',
@@ -162,9 +160,6 @@ export function assignParameters(
     'Relative place contact rates over time given social distancing by place type',
     'Relative household contact rates over time given social distancing',
     'Relative spatial contact rates over time given social distancing',
-    'Relative household contact rates over time given enhanced social distancing',
-    'Relative spatial contact rates over time given enhanced social distancing',
-    'Relative place contact rates over time given enhanced social distancing by place type',
   ]) {
     const value = p[key]
     if (value) {
@@ -176,15 +171,16 @@ export function assignParameters(
   }
 
   // Set all trigger incidences to 0 because we do not support adaptive triggers
-  Object.entries(p)
-    .filter(([key]) => key.toLowerCase().includes('trigger incidence'))
-    .forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        p[key] = new Array(periodCount).fill(0)
-      } else {
-        p[key] = 0
-      }
-    })
+  setParameterFamilyTo0(p, 'trigger incidence', periodCount)
+
+  // Deprecated parameters
+  setParameterFamilyTo0(p, 'after change', periodCount)
+
+  // Set to 0 based on recommendation from Neil Ferguson
+  setParameterFamilyTo0(p, 'incidence threshold', periodCount)
+
+  // These parameters are used to simulate "shielding" of the vulnerable. They are not being used yet.
+  setParameterFamilyTo0(p, 'enhanced', periodCount)
 
   p['Number of change times for levels of case isolation'] = periodCount
   p['Number of change times for levels of household quarantine'] = periodCount
@@ -257,6 +253,9 @@ export function assignAdminParameters(p: {}, subregionName: string) {
   p['Number of level 1 administrative units to include'] = 1
   p['List of level 1 administrative units to include'] = subregionName
 
+  // unused parameter
+  delete p['Number of detected cases needed before outbreak alert triggered']
+
   // For now, we need to remove unused entries from the admin unit name lookup table.
   // Note: The way filter is used assumes the the entry is an [[]], but if it is a single line it
   // will only be [] and the filter will fail. Be careful which admin files you use this with.
@@ -272,6 +271,40 @@ export function assignAdminParameters(p: {}, subregionName: string) {
   }
 
   p['Codes and country/province names for admin units'] = adminUnitNameLookup
+}
+
+/**
+ * Sets an entire family of parameters to zero.
+ * Parameters are identified by substrings within the parameter name.
+ * Values are set to zero or arrays of zeroes based on the expected shape.
+ */
+// exported for testing
+export function setParameterFamilyTo0(
+  p: {},
+  familyName: string,
+  periodCount: number
+) {
+  familyName = familyName.toLowerCase()
+  Object.entries(p)
+    .filter(([key]) => key.toLowerCase().includes(familyName))
+    .forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        // the top-level array should change size only if this is an _over time_ parameter
+        const newLen = /over time/i.test(key) ? periodCount : value.length
+        p[key] = zeroes(newLen)
+        if (Array.isArray(value[0])) {
+          // nested arrays should keep the same length
+          const len = value[0].length
+          p[key] = p[key].map(_ => zeroes(len))
+        }
+      } else {
+        p[key] = 0
+      }
+    })
+}
+
+function zeroes(len) {
+  return new Array(len).fill(0)
 }
 
 function proportionForIntensity(i?: input.Intensity): number {
