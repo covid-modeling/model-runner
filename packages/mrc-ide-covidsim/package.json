@@ -1,6 +1,6 @@
 {
   "name": "@covid-modeling/mrc-ide-covidsim",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "main": "dist/index.js",
   "scripts": {
     "test": "PATH=$PATH:../../node_modules/.bin && mocha --debug-brk --ui tdd -r ts-node/register test/unit/*-test.ts",
