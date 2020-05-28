@@ -108,11 +108,13 @@ suite('the imperial model parameter format', () => {
     assert.deepEqual(pp, {
       'Alert trigger starts after interventions': 1,
       'Trigger alert on deaths': 1,
-      'Day of year interventions start': 60,
-      'Day of year trigger is reached': 79,
+      'Day of year interventions start': 61,
+      'Day of year trigger is reached': 80,
       'Number of days to accummulate cases/deaths before alert': 1000,
       'Number of deaths accummulated before alert': 120,
       'Treatment trigger incidence per cell': 0,
+      'Places close only once': 0,
+      'Social distancing only once': 0,
     })
   })
 

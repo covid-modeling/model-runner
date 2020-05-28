@@ -2,12 +2,13 @@ import { input } from '@covid-modeling/api'
 import { DateTime } from 'luxon'
 import * as assert from 'assert'
 
-const day0 = dateFromAPI('2020-01-01')
+const day0 = dateFromAPI('2019-12-31')
 
 function dateFromAPI(isoDate: string): DateTime {
   return DateTime.fromISO(isoDate, { zone: 'utc' })
 }
 
+// Note: All dates are 0 indexed relative to each other or day0.
 function daysBetween(t0: DateTime, t1: DateTime): number {
   return t1.diff(t0, 'days').days
 }
@@ -25,6 +26,9 @@ export function assignPreParameters(
   const calibrationDays = daysBetween(day0, calibrationDate)
   const interventionStartDays = daysBetween(day0, interventionStart)
 
+  // unused parameter
+  delete p['Number of detected cases needed before outbreak alert triggered']
+
   p['Day of year trigger is reached'] = calibrationDays
   p['Number of days to accummulate cases/deaths before alert'] = 1000
   p['Number of deaths accummulated before alert'] =
@@ -37,6 +41,10 @@ export function assignPreParameters(
   p['Alert trigger starts after interventions'] = 1
 
   p['Treatment trigger incidence per cell'] = 0
+
+  // Daniel asked that these be set to 0
+  p['Places close only once'] = 0
+  p['Social distancing only once'] = 0
 }
 
 export function assignParameters(
@@ -132,6 +140,14 @@ export function assignParameters(
   // School closure
   p['Place closure start time'] = 0
   p['Duration of place closure'] = 10000
+
+  /*
+    If there are changes times / intervention periods a < b < c < d, then closure durations have
+    upper bounds of (b-a), (c-b), and (d-a). So yes you're right the value of 10000 is set so as to
+    be an arbitrarily large value to definitely exceed (b-a) etc. Basically, unless you structured
+    the interventions in such a way that place closures should end within a period, this doesn't
+    matter and should be set to that it can't possibly do the wrong thing.
+   */
   p['Duration of place closure over time'] = new Array(
     modelParameters.interventionPeriods.length
   ).fill(10000)
@@ -156,9 +172,6 @@ export function assignAdminParameters(p: {}, subregionName: string) {
   p['Number of countries to include'] = 0
   p['Number of level 1 administrative units to include'] = 1
   p['List of level 1 administrative units to include'] = subregionName
-
-  // unused parameter
-  delete p['Number of detected cases needed before outbreak alert triggered']
 
   // For now, we need to remove unused entries from the admin unit name lookup table.
   // Note: The way filter is used assumes the the entry is an [[]], but if it is a single line it
