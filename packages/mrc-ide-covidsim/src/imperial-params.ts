@@ -1,3 +1,5 @@
+// Sample R code for generating paramters files: https://github.com/mrc-ide/covid-sim/blob/dlaydon/CommentCalib/Rscripts/MakeParamFiles.R
+
 import { input } from '@covid-modeling/api'
 import { DateTime } from 'luxon'
 import * as assert from 'assert'
