@@ -19,7 +19,7 @@
   "dependencies": {
     "@covid-modeling/api": "^0.10.0",
     "@covid-modeling/model-runner": "^1.2.0",
-    "@covid-modeling/mrc-ide-covidsim": "^1.7.0",
+    "@covid-modeling/mrc-ide-covidsim": "^1.8.0",
     "archiver": "^4.0.1",
     "d3": "^5.15.0",
     "dockerode": "^3.2.0",

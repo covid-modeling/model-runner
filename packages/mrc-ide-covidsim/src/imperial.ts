@@ -4,6 +4,7 @@ import { spawn } from 'child_process'
 import { output, input } from '@covid-modeling/api'
 import { convertOutput } from './convert-output'
 import * as params from './imperial-params'
+import * as paramsSerializer from './params-serialization'
 import { logger } from './logger'
 import { RunnerModelInput, Model } from './model'
 import { COUNTRY_PARAMS_BY_ISO_CODE } from './mappings'
@@ -124,18 +125,18 @@ export class ImperialModel implements Model {
       preParametersTemplatePath,
       'utf8'
     )
-    const preParameters = params.parse(preParametersTemplate)
+    const preParameters = paramsSerializer.parse(preParametersTemplate)
     params.assignPreParameters(preParameters, modelInput.parameters)
-    const preParametersContent = params.serialize(preParameters)
+    const preParametersContent = paramsSerializer.serialize(preParameters)
     fs.writeFileSync(preParametersPath, preParametersContent, 'utf8')
 
     // Generate the intervention-related parameters based on the input.
     inputFiles.push(parametersTemplatePath)
     const parametersPath = path.join(this.inputDir, 'input-params.txt')
     const parametersTemplate = fs.readFileSync(parametersTemplatePath, 'utf8')
-    const parameters = params.parse(parametersTemplate)
+    const parameters = paramsSerializer.parse(parametersTemplate)
     params.assignParameters(parameters, modelInput.parameters)
-    const parametersContent = params.serialize(parameters)
+    const parametersContent = paramsSerializer.serialize(parameters)
     fs.writeFileSync(parametersPath, parametersContent, 'utf8')
 
     // We only want to modify the admin file for subregions that don't have their own admin file.
@@ -148,9 +149,9 @@ export class ImperialModel implements Model {
       inputFiles.push(adminPath)
       const editedAdminFile = path.join(this.inputDir, 'admin-params.txt')
       const adminText = fs.readFileSync(adminPath, 'utf8')
-      const adminParameters = params.parse(adminText)
+      const adminParameters = paramsSerializer.parse(adminText)
       params.assignAdminParameters(adminParameters, subregionName)
-      const adminContent = params.serialize(adminParameters)
+      const adminContent = paramsSerializer.serialize(adminParameters)
       fs.writeFileSync(editedAdminFile, adminContent)
       adminPath = editedAdminFile
     } else {

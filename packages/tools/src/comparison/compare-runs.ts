@@ -8,7 +8,7 @@ import {
   enforceOutputSchema,
   enforceRunnerInputSchema,
 } from '@covid-modeling/model-runner/src/schema'
-import { parse } from '@covid-modeling/mrc-ide-covidsim/src/imperial-params'
+import { parse } from '@covid-modeling/mrc-ide-covidsim/src/params-serialization'
 
 const RUNNER_INPUT_FILENAME = 'runnerInputFile.json'
 const MODEL_INPUT_FILENAME = 'inputFile.json'
@@ -208,7 +208,9 @@ suite('comparing runs', async () => {
     // Remove temporary subdirectories first, since recursive deletion
     // will fail if they are non-empty.
     const dirs = await fs.promises.readdir(tmpDir)
-    await Promise.all(dirs.map(dir => fs.promises.rmdir(dir, { recursive: true })))
+    await Promise.all(
+      dirs.map(dir => fs.promises.rmdir(dir, { recursive: true }))
+    )
     // Remove temporary working directory.
     await fs.promises.rmdir(tmpDir, { recursive: true })
   })
@@ -228,7 +230,9 @@ suite('comparing runs', async () => {
     inputZips = [baseResultsZip, comparisonResultsZip]
 
     // Unzip the given artifacts in parallel.
-    await Promise.all(inputZips.map((inputZip, i) => unzipResults(tmpDir, inputZip, i)))
+    await Promise.all(
+      inputZips.map((inputZip, i) => unzipResults(tmpDir, inputZip, i))
+    )
   }).timeout(10000)
 
   test('comparing run inputs', async () => {

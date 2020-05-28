@@ -5,7 +5,7 @@ import { assert } from 'chai'
 import { ImperialModel } from '../../src/imperial'
 import { BIN_DIR, MODEL_DATA_DIR } from '../../src/config'
 import { input } from '@covid-modeling/api'
-import { parse } from '../../src/imperial-params'
+import { parse } from '../../src/params-serialization'
 
 suite('imperial integration', () => {
   const testRegions = [
