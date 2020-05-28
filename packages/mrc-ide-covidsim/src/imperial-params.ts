@@ -144,11 +144,11 @@ export function assignParameters(
   p['Duration of place closure'] = 10000
 
   /*
-    If there are changes times / intervention periods a < b < c < d, then closure durations have
-    upper bounds of (b-a), (c-b), and (d-a). So yes you're right the value of 10000 is set so as to
-    be an arbitrarily large value to definitely exceed (b-a) etc. Basically, unless you structured
-    the interventions in such a way that place closures should end within a period, this doesn't
-    matter and should be set to that it can't possibly do the wrong thing.
+   * We set 'Duration of place closure over time' to be large enough so that the value has no effect.
+   * This parameter specifies how many days within a given intervention period a place is actually
+   * closed for. For example if there are change times / intervention periods a < b < c < d, then
+   * closure durations have upper bounds of (b-a), (c-b), and (d-c). Any values greater than that
+   * will have no effect.
    */
   p['Duration of place closure over time'] = new Array(
     modelParameters.interventionPeriods.length

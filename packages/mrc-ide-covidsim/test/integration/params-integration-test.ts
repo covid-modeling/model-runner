@@ -124,6 +124,10 @@ suite('configuration validation', () => {
       ['Duration of social distancing']: 10000,
       ['Place closure start time']: 0,
       ['Duration of place closure']: 10000,
+      ['Relative place contact rates over time given enhanced social distancing by place type']: [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
     })
 
     // Validate dynamic settings
