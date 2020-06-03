@@ -42,15 +42,15 @@ For working with the TypeScript portion of the project:
 - [Node.js](https://nodejs.org/en/)
 - [Lerna](https://lerna.js.org/) module:
 
-    ```sh
-    npm i -g lerna
-    ```
+     ```sh
+     npm i -g lerna
+     ```
 
 If you want to build a new version of any of the models, you will need additional tools such as a C compiler.
 
 ## Building, developing, and testing
 
-The model-runner package and some of the connectors are written in TypeScript. The models themselves are external and must be built and packaged separately.
+The model-runner package and some of the connectors are written in TypeScript. The models themselves are external and must be built and packaged separately. Currently, the build scripts are only compatible with MacOS and Linux. Windows is not supported.
 
 ### Building
 
@@ -112,18 +112,20 @@ To build and run one of the connectors on the local filesystem, outside Docker:
 1. `cd packages/<connector>`
 1. Bootstrap the connector
 
-    ```sh
-    make bootstrap
-    ```
+      ```sh
+      make bootstrap
+      ```
 
-    The first time you run, you will be instructed to set an environment variable pointing to your local checkout of the model (different for each connector). After setting it, re-run `make bootstrap` to build the model code.
+      The first time you run, you will be instructed to set an environment variable pointing to your local checkout of the model (different for each connector). After setting it, re-run `make bootstrap` to build the model code.
+
 1. Compile the TypeScript in one of the project directories:
 
-    ```sh
-    make build
-    ```
+      ```sh
+      make build
+      ```
 
-    This will populate the `dist` folder with JavaScript files.
+      This will populate the `dist` folder with JavaScript files.
+
 1. Run the tests as described earlier.
 1. Run the model using the script `packages/<connector>/bin/run-model`. The model may ask for additional environment variables to be set.
 
@@ -140,9 +142,9 @@ To publish a new version of the `api` package to npm:
 1. Bump the version number of the `api` package.
 2. Create an annotated tag (where A.B.C is the package version):
 
-    ```sh
-    git tag -a -m api/vA.B.C api/vA.B.C
-    ```
+      ```sh
+      git tag -a -m api/vA.B.C api/vA.B.C
+      ```
 
 3. Push the tag to the remote: `git push origin api/vA.B.C`
 
