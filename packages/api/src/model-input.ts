@@ -13,15 +13,7 @@ export interface ModelParameters {
    */
   calibrationDate: ISODate
 
-  /**
-   * The total number of confirmed cases in the region before the calibration date.
-   */
-  calibrationCaseCount: number
-
-  /**
-   * The total number of deaths in the region before the calibration date.
-   */
-  calibrationDeathCount: number
+  calibrationData: HistoricalData
 
   /**
    * The assumed reproduction number for the virus. If this is null, then each
@@ -35,33 +27,39 @@ export interface ModelParameters {
   interventionPeriods: InterventionPeriod[]
 }
 
+export interface HistoricalData {
+  endDate: ISODate
+  /**
+   * The total number of confirmed cases in the region before the calibration date.
+   */
+  totalCases: number
+
+  /**
+   * The total number of deaths in the region before the calibration date.
+   */
+  totalDeaths: number
+
+  actuals: Actual[]
+}
+
+export interface Actual {
+  date: ISODate
+  cases: number
+  cumulativeCases: number
+  deaths: number
+  cumulativeDeaths: number
+  // Eventually we might want to have a sub object with more specific types of mobility?
+  mobility?: number
+}
 export interface InterventionPeriod {
   /**
    * An ISO-8601 string encoding the date that these interventions begin.
    */
   startDate: ISODate
 
-  /**
-   * The level of social distancing in the region.
-   */
-  socialDistancing?: Intensity
+  endDate: ISODate
 
-  /**
-   * The level of school closure in the region.
-   */
-  schoolClosure?: Intensity
-
-  /**
-   * The level to which individuals with symptoms self-isolate.
-   */
-  caseIsolation?: Intensity
-
-  /**
-   * The level to which entire households self-isolate when one member
-   * of the household has symptoms.
-   */
-  voluntaryHomeQuarantine?: Intensity
-
+  inteventions: Intervention[]
   /**
    * The estimated reduction in population contact resulting from
    * all of the above interventions. Some models require this generalized
@@ -70,10 +68,29 @@ export interface InterventionPeriod {
   reductionPopulationContact: number
 }
 
+export interface Intervention {
+  type: InterventionType
+  intensity?: Intensity
+  reductionPopulationContact?: number
+}
+
 export type ISODate = string
 
 export enum Intensity {
   Mild = 'mild',
   Moderate = 'moderate',
   Aggressive = 'aggressive',
+}
+
+export enum InterventionType {
+  CaseIsolation,
+  VoluntaryHomeQuarantine,
+  SocialDistancing,
+  SchoolClosure,
+  WorkplaceClosure,
+  CancelPublicEvents,
+  RestrictGatherings,
+  StayAtHome,
+  RestrictInternalMovement,
+  RestrictInternationalTravel,
 }
