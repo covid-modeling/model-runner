@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 services:
   test:
     build:
@@ -30,7 +30,7 @@ services:
       - WOLFRAM_PASSWORD
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./test/test-job-mrc-ide-covidsim.json:/data/input/inputFile.json:ro
+      - ./test/test-job-mrc-ide-covidsim.json:/data/input/inputFile.json:rw
       - ./output:/data/output:rw
       - ./log:/data/log:rw
     command: /data/input/inputFile.json
