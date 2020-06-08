@@ -6,30 +6,34 @@ set -e
 
 if [ ! -d $BASEL_REPO ]; then
 cat <<MESSAGE
-Set the 'BASEL_REPO' to the path to the Basel model repository,
+The Basel model repository is at https://github.com/neherlab/covid19_scenarios.
+Set the 'BASEL_REPO' environment variable to the checkout path of the model repository
 or check out the repository to ../../../covid19_scenarios
-For now we recommend you check out this fork and branch:
-https://github.com/adityasharad/covid19_scenarios/tree/cli-entry-point
 MESSAGE
 exit 1
 fi
 
-# Build the Basel repo and create an executable
-rm -rf .local/bin
-mkdir -p .local/bin
-CURRENT=$PWD
-cd $BASEL_REPO
-echo "Compiling the Basel model CLI entry point"
+# Build the Basel model schema
+pushd $BASEL_REPO
+echo "Installing Basel model dependencies"
+yarn install --frozen-lockfile --ignore-scripts
+echo "Installed Basel model dependencies"
+echo "Compiling the Basel model schema"
 yarn schema:clean
 yarn schema:totypes
-tsc --esModuleInterop --resolveJsonModule src/algorithms/cli.ts || cd $CURRENT
-echo "Compiled the Basel model CLI entry point"
+echo "Compiled the Basel model schema"
+popd
+
+# Create an executable with a hardcoded path to the model repo
+rm -rf .local/bin
+mkdir -p .local/bin
 BASEL_REPO_PATH="$(readlink -f $BASEL_REPO)"
 LOCAL_EXEC_PATH=.local/bin/run-basel-model
-echo -e "#!/bin/bash\n\nnode $BASEL_REPO_PATH/src/algorithms/cli.js \$@" > $LOCAL_EXEC_PATH
+sed -e "s|\$MODEL_REPO_ROOT|$BASEL_REPO_PATH|g" bin/run-basel-model > $LOCAL_EXEC_PATH
 chmod +x $LOCAL_EXEC_PATH
 echo "Wrote a local executable script to $LOCAL_EXEC_PATH"
 
 # Copy Basel data for local runs
 mkdir -p data/basel
-cp $BASEL_REPO/src/assets/data/scenarios/scenarios.json data/
+cp $BASEL_REPO_PATH/src/assets/data/scenarios.json data/
+echo "Copied model data"

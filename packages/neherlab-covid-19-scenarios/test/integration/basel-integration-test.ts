@@ -5,6 +5,7 @@ import { assert } from 'chai'
 import { input } from '@covid-modeling/api'
 import { BaselModel } from '../../src/basel'
 import { BIN_DIR, MODEL_DATA_DIR } from '../../src/config'
+import { logger } from '../../src/logger'
 
 suite('basel integration', () => {
   interface TestRegion {
@@ -14,13 +15,13 @@ suite('basel integration', () => {
     r0?: number
   }
   const regions: TestRegion[] = [
-    { region: 'US', subregion: undefined, t0: '2020-02-01' },
-    { region: 'US', subregion: 'US-NY', t0: '2020-02-13' },
-    { region: 'GB', subregion: undefined, t0: '2020-02-09' },
-    { region: 'DE', subregion: undefined, t0: '2020-02-06' },
-    { region: 'IT', subregion: undefined, t0: '2020-02-02' },
-    { region: 'RU', subregion: undefined, t0: '2020-02-20' },
-    { region: 'CA', subregion: undefined, t0: '2020-02-09' },
+    { region: 'US', subregion: undefined, t0: '2020-02-08' },
+    { region: 'US', subregion: 'US-NY', t0: '2020-02-20' },
+    { region: 'GB', subregion: undefined, t0: '2020-02-16' },
+    { region: 'DE', subregion: undefined, t0: '2020-02-13' },
+    { region: 'IT', subregion: undefined, t0: '2020-02-09' },
+    { region: 'RU', subregion: undefined, t0: '2020-02-27' },
+    { region: 'CA', subregion: undefined, t0: '2020-02-16' },
   ]
   const testRegions: TestRegion[] = []
   regions.forEach(r => {
@@ -57,6 +58,7 @@ suite('basel integration', () => {
       const logDir = path.join(root, 'log')
       const inputDir = path.join(root, 'input')
       const outputDir = path.join(root, 'output')
+      logger.info('Logging to %s', logDir)
 
       fs.mkdirSync(logDir)
       fs.mkdirSync(inputDir)
