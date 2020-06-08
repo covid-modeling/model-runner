@@ -6,10 +6,9 @@ set -e
 
 if [ ! -d $BASEL_REPO ]; then
 cat <<MESSAGE
-Set the 'BASEL_REPO' to the path to the Basel model repository,
+The Basel model repository is at https://github.com/neherlab/covid19_scenarios.
+Set the 'BASEL_REPO' environment variable to the checkout path of the model repository
 or check out the repository to ../../../covid19_scenarios
-For now we recommend you check out this fork and branch:
-https://github.com/adityasharad/covid19_scenarios/tree/unified-ui-cli
 MESSAGE
 exit 1
 fi
