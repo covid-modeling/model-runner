@@ -2,7 +2,7 @@ import { input, output } from '@covid-modeling/api'
 
 export interface RunnerModelInput {
   modelInput: input.ModelInput
-  inputFiles: string[]
+  inputFile: string
 }
 
 export interface Model {

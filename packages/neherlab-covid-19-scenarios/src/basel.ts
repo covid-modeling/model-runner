@@ -45,7 +45,7 @@ export class BaselModel implements Model {
     return {
       modelInput,
       binaryPath: path.join(this.binDir, 'run-basel-model'),
-      inputFiles: [inputFile],
+      inputFile,
     }
   }
 
@@ -58,8 +58,7 @@ export class BaselModel implements Model {
     const logFile = path.join(this.logDir, 'basel.log')
     const logFd = fs.openSync(logFile, 'a')
 
-    const args = baselModelInput.inputFiles
-    args.push(outputFile)
+    const args = ['--scenario', baselModelInput.inputFile, '--out', outputFile]
 
     // Run the model and wait until it exits.
     const modelProcess = spawn(baselModelInput.binaryPath, args, {
@@ -262,7 +261,8 @@ export class BaselConnector implements BaselModelConnector {
 
     logger.debug('Basel connector: cumulative deaths')
     logger.debug(cumDeaths)
-    // The model reports cumulative deaths but not incidence of deaths,
+    // The model reports cumulative deaths and weekly incidence of deaths,
+    // but not daily incidence of deaths,
     // so read the cumulative data and convert back to pointwise.
     const incDeath = cumulativeToPointwise(cumDeaths)
 
