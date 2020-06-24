@@ -91,8 +91,8 @@ export interface MitigationInterval {
 }
 
 export interface DateRange {
-  begin: Date
-  end: Date
+  begin: number
+  end: number
 }
 
 export interface PercentageRange {

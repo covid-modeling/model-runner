@@ -10,6 +10,7 @@ import {
 import { BaselConnector, BaselRunnerModelInput } from '../../src/basel'
 import * as path from 'path'
 import * as fs from 'fs'
+import { DateTime } from 'luxon'
 
 const TEST_SCENARIO_DATUM: ScenarioDatum = {
   mitigation: {
@@ -37,9 +38,9 @@ const TEST_SCENARIO_DATUM: ScenarioDatum = {
   simulation: {
     numberStochasticRuns: 10,
     simulationTimeRange: {
-      begin: new Date('2020-04-01'),
+      begin: DateTime.fromISO('2020-04-01', { zone: 'utc' }).toMillis(),
       // Ignored
-      end: new Date(),
+      end: new Date().getTime(),
     },
   },
 }
@@ -157,8 +158,8 @@ suite('converting to Basel model input', () => {
       assert.equal(specificInput.data.simulation.numberStochasticRuns, 10)
       assert.equal(specificInput.data.epidemiological.r0.end, expectedR0)
       assert.deepEqual(specificInput.data.simulation.simulationTimeRange, {
-        begin: new Date('2020-04-01'),
-        end: new Date('2022-03-22'),
+        begin: DateTime.fromISO('2020-04-01', { zone: 'utc' }).toMillis(),
+        end: DateTime.fromISO('2022-03-22', { zone: 'utc' }).toMillis(),
       })
       assert.deepEqual(specificInput.data.mitigation, {
         mitigationIntervals: [
@@ -170,8 +171,8 @@ suite('converting to Basel model input', () => {
               end: 50,
             },
             timeRange: {
-              begin: new Date('2020-04-01'),
-              end: new Date('2020-04-08'),
+              begin: DateTime.fromISO('2020-04-01', { zone: 'utc' }).toMillis(),
+              end: DateTime.fromISO('2020-04-08', { zone: 'utc' }).toMillis(),
             },
           },
           {
@@ -179,8 +180,8 @@ suite('converting to Basel model input', () => {
             name: 'Social distancing - general population',
             transmissionReduction: { begin: 90, end: 90 },
             timeRange: {
-              begin: new Date('2020-04-08'),
-              end: new Date('2020-07-01'),
+              begin: DateTime.fromISO('2020-04-08', { zone: 'utc' }).toMillis(),
+              end: DateTime.fromISO('2020-07-01', { zone: 'utc' }).toMillis(),
             },
           },
           {
@@ -188,8 +189,8 @@ suite('converting to Basel model input', () => {
             name: 'Social distancing - general population',
             transmissionReduction: { begin: 0, end: 0 },
             timeRange: {
-              begin: new Date('2020-07-01'),
-              end: new Date('2022-03-22'),
+              begin: DateTime.fromISO('2020-07-01', { zone: 'utc' }).toMillis(),
+              end: DateTime.fromISO('2022-03-22', { zone: 'utc' }).toMillis(),
             },
           },
         ],
@@ -432,7 +433,7 @@ suite('converting from Basel model output', () => {
                 '60-69': 0.0057752351349336095,
                 '70-79': 0.00960950244916603,
                 '80+': 0.022747120267013088,
-                'total': 0.039325561723671854,
+                total: 0.039325561723671854,
               },
             },
             cumulative: {

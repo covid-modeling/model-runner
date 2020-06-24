@@ -59,6 +59,11 @@ export class BaselModel implements Model {
     const logFd = fs.openSync(logFile, 'a')
 
     const args = ['--scenario', baselModelInput.inputFile, '--out', outputFile]
+    logger.info(
+      'Running Basel model: %s %s',
+      baselModelInput.binaryPath,
+      args.join(' ')
+    )
 
     // Run the model and wait until it exits.
     const modelProcess = spawn(baselModelInput.binaryPath, args, {
@@ -180,8 +185,8 @@ export class BaselConnector implements BaselModelConnector {
     // HARDCODED CHOICE: End date is 720 days after start date.
     const tMax = tMin.plus({ days: 720 })
     scenario.simulation.simulationTimeRange = {
-      begin: tMin.toJSDate(),
-      end: tMax.toJSDate(),
+      begin: tMin.toMillis(),
+      end: tMax.toMillis(),
     }
 
     scenario.mitigation.mitigationIntervals = interventionPeriods.map(
@@ -202,8 +207,8 @@ export class BaselConnector implements BaselModelConnector {
             end: intervention.reductionPopulationContact,
           },
           timeRange: {
-            begin: startDate.toJSDate(),
-            end: endDate.toJSDate(),
+            begin: startDate.toMillis(),
+            end: endDate.toMillis(),
           },
         } as MitigationInterval
       }
