@@ -1,8 +1,8 @@
 import { ModelConnector } from './connector-api'
 
-// See https://github.com/neherlab/covid19_scenarios/blob/1.3.5/schemas/
+// See https://github.com/neherlab/covid19_scenarios/blob/$BASEL_VERSION/schemas/
 
-// Input schema
+// Input schema: see https://github.com/neherlab/covid19_scenarios/blob/$BASEL_VERSION/src/algorithms/types/Param.types.ts
 export interface AgeDistributionArray {
   all: AgeDistributionData[]
 }
@@ -91,8 +91,8 @@ export interface MitigationInterval {
 }
 
 export interface DateRange {
-  begin: Date
-  end: Date
+  begin: number
+  end: number
 }
 
 export interface PercentageRange {
@@ -133,7 +133,7 @@ export interface SeverityDistributionDatum {
   severe: number
 }
 
-// Output schema
+// Output schema: see https://github.com/neherlab/covid19_scenarios/blob/$BASEL_VERSION/src/algorithms/types/Result.types.ts
 
 export interface ExposedCurrentData {
   susceptible: Record<string, number>
@@ -142,6 +142,7 @@ export interface ExposedCurrentData {
   severe: Record<string, number>
   critical: Record<string, number>
   overflow: Record<string, number>
+  weeklyFatality: Record<string, number>
 }
 
 export interface ExposedCumulativeData {
@@ -210,9 +211,16 @@ export interface TimeSeriesWithRange {
   upper: TimeSeries
 }
 
+export interface PlotDatum {
+  time: number
+  lines: Record<string, number | undefined>
+  areas: Record<string, [number, number] | undefined>
+}
+
 export interface AlgorithmResult {
   trajectory: Trajectory
   R0: TimeSeriesWithRange
+  plotData: PlotDatum[]
 }
 
 export interface BaselModelConnector

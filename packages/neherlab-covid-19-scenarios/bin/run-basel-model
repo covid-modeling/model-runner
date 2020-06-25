@@ -1,5 +1,5 @@
 #!/bin/bash
 
 pushd $MODEL_REPO_ROOT
-yarn babel-node --extensions ".ts" src/algorithms/cli.ts "$@"
+yarn cli "$@"
 popd

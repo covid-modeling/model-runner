@@ -27,7 +27,13 @@ popd
 # Create an executable with a hardcoded path to the model repo
 rm -rf .local/bin
 mkdir -p .local/bin
-BASEL_REPO_PATH="$(readlink -f $BASEL_REPO)"
+
+# Find the absolute path to the repo.
+if [[ $OSTYPE == "darwin"* ]]; then
+  BASEL_REPO_PATH="$(greadlink -f $BASEL_REPO)"
+else
+  BASEL_REPO_PATH="$(readlink -f $BASEL_REPO)"
+fi
 LOCAL_EXEC_PATH=.local/bin/run-basel-model
 sed -e "s|\$MODEL_REPO_ROOT|$BASEL_REPO_PATH|g" bin/run-basel-model > $LOCAL_EXEC_PATH
 chmod +x $LOCAL_EXEC_PATH

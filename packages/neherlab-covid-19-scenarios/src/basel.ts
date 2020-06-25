@@ -45,7 +45,7 @@ export class BaselModel implements Model {
     return {
       modelInput,
       binaryPath: path.join(this.binDir, 'run-basel-model'),
-      inputFiles: [inputFile],
+      inputFile,
     }
   }
 
@@ -58,8 +58,12 @@ export class BaselModel implements Model {
     const logFile = path.join(this.logDir, 'basel.log')
     const logFd = fs.openSync(logFile, 'a')
 
-    const args = baselModelInput.inputFiles
-    args.push(outputFile)
+    const args = ['--scenario', baselModelInput.inputFile, '--out', outputFile]
+    logger.info(
+      'Running Basel model: %s %s',
+      baselModelInput.binaryPath,
+      args.join(' ')
+    )
 
     // Run the model and wait until it exits.
     const modelProcess = spawn(baselModelInput.binaryPath, args, {
@@ -181,8 +185,8 @@ export class BaselConnector implements BaselModelConnector {
     // HARDCODED CHOICE: End date is 720 days after start date.
     const tMax = tMin.plus({ days: 720 })
     scenario.simulation.simulationTimeRange = {
-      begin: tMin.toJSDate(),
-      end: tMax.toJSDate(),
+      begin: tMin.toMillis(),
+      end: tMax.toMillis(),
     }
 
     scenario.mitigation.mitigationIntervals = interventionPeriods.map(
@@ -203,8 +207,8 @@ export class BaselConnector implements BaselModelConnector {
             end: intervention.reductionPopulationContact,
           },
           timeRange: {
-            begin: startDate.toJSDate(),
-            end: endDate.toJSDate(),
+            begin: startDate.toMillis(),
+            end: endDate.toMillis(),
           },
         } as MitigationInterval
       }
@@ -262,7 +266,8 @@ export class BaselConnector implements BaselModelConnector {
 
     logger.debug('Basel connector: cumulative deaths')
     logger.debug(cumDeaths)
-    // The model reports cumulative deaths but not incidence of deaths,
+    // The model reports cumulative deaths and weekly incidence of deaths,
+    // but not daily incidence of deaths,
     // so read the cumulative data and convert back to pointwise.
     const incDeath = cumulativeToPointwise(cumDeaths)
 

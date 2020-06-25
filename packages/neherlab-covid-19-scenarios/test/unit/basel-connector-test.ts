@@ -10,6 +10,7 @@ import {
 import { BaselConnector, BaselRunnerModelInput } from '../../src/basel'
 import * as path from 'path'
 import * as fs from 'fs'
+import { DateTime } from 'luxon'
 
 const TEST_SCENARIO_DATUM: ScenarioDatum = {
   mitigation: {
@@ -37,9 +38,9 @@ const TEST_SCENARIO_DATUM: ScenarioDatum = {
   simulation: {
     numberStochasticRuns: 10,
     simulationTimeRange: {
-      begin: new Date('2020-04-01'),
+      begin: DateTime.fromISO('2020-04-01', { zone: 'utc' }).toMillis(),
       // Ignored
-      end: new Date(),
+      end: new Date().getTime(),
     },
   },
 }
@@ -157,8 +158,8 @@ suite('converting to Basel model input', () => {
       assert.equal(specificInput.data.simulation.numberStochasticRuns, 10)
       assert.equal(specificInput.data.epidemiological.r0.end, expectedR0)
       assert.deepEqual(specificInput.data.simulation.simulationTimeRange, {
-        begin: new Date('2020-04-01'),
-        end: new Date('2022-03-22'),
+        begin: DateTime.fromISO('2020-04-01', { zone: 'utc' }).toMillis(),
+        end: DateTime.fromISO('2022-03-22', { zone: 'utc' }).toMillis(),
       })
       assert.deepEqual(specificInput.data.mitigation, {
         mitigationIntervals: [
@@ -170,8 +171,8 @@ suite('converting to Basel model input', () => {
               end: 50,
             },
             timeRange: {
-              begin: new Date('2020-04-01'),
-              end: new Date('2020-04-08'),
+              begin: DateTime.fromISO('2020-04-01', { zone: 'utc' }).toMillis(),
+              end: DateTime.fromISO('2020-04-08', { zone: 'utc' }).toMillis(),
             },
           },
           {
@@ -179,8 +180,8 @@ suite('converting to Basel model input', () => {
             name: 'Social distancing - general population',
             transmissionReduction: { begin: 90, end: 90 },
             timeRange: {
-              begin: new Date('2020-04-08'),
-              end: new Date('2020-07-01'),
+              begin: DateTime.fromISO('2020-04-08', { zone: 'utc' }).toMillis(),
+              end: DateTime.fromISO('2020-07-01', { zone: 'utc' }).toMillis(),
             },
           },
           {
@@ -188,8 +189,8 @@ suite('converting to Basel model input', () => {
             name: 'Social distancing - general population',
             transmissionReduction: { begin: 0, end: 0 },
             timeRange: {
-              begin: new Date('2020-07-01'),
-              end: new Date('2022-03-22'),
+              begin: DateTime.fromISO('2020-07-01', { zone: 'utc' }).toMillis(),
+              end: DateTime.fromISO('2022-03-22', { zone: 'utc' }).toMillis(),
             },
           },
         ],
@@ -282,6 +283,18 @@ suite('converting from Basel model output', () => {
                 '70-79': 0.03974490432581387,
                 '80+': 0.03699774488871799,
                 total: 0.38854916525294725,
+              },
+              weeklyFatality: {
+                '0-9': 22.715714492873268,
+                '10-19': 133.79494311504567,
+                '20-29': 288.52988854260593,
+                '30-39': 743.1058476696137,
+                '40-49': 3014.296042600891,
+                '50-59': 10612.412199608014,
+                '60-69': 40792.89004316287,
+                '70-79': 80298.91773631038,
+                '80+': 104403.51804900041,
+                total: 240310.18046450272,
               },
             },
             cumulative: {
@@ -410,6 +423,18 @@ suite('converting from Basel model output', () => {
                 '80+': 0.036997744295259455,
                 total: 0.3885491580978565,
               },
+              weeklyFatality: {
+                '0-9': 8.184549287193477e-7,
+                '10-19': 0.000008230622825067258,
+                '20-29': 0.000017665262873833854,
+                '30-39': 0.0000783300366720141,
+                '40-49': 0.00032844103407114744,
+                '50-59': 0.0007602184668940026,
+                '60-69': 0.0057752351349336095,
+                '70-79': 0.00960950244916603,
+                '80+': 0.022747120267013088,
+                total: 0.039325561723671854,
+              },
             },
             cumulative: {
               recovered: {
@@ -469,6 +494,7 @@ suite('converting from Basel model output', () => {
         upper: [],
         mean: [],
       },
+      plotData: [],
     }
     const parameters: input.ModelParameters = {
       calibrationDate: '2020-03-15',
@@ -488,7 +514,7 @@ suite('converting from Basel model output', () => {
     }
     const runInput: BaselRunnerModelInput = {
       binaryPath: 'test-path',
-      inputFiles: [],
+      inputFile: 'test-input-file.json',
       modelInput: generalInput,
     }
 
