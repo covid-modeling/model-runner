@@ -1,0 +1,61 @@
+# Check for new versions of the models and update the connectors to use the latest models.
+name: Update Model Versions
+on:
+  schedule:
+    - cron: '0 7 * * 1' # run every Monday
+
+jobs:
+  mc19:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/modelingcovid-covidmodel
+    steps:
+      - uses: actions/checkout@v2
+
+      # Run a GraphQL query against the GitHub Package Registry API to find the latest version of the model.
+      - name: Get latest model version
+        uses: octokit/graphql-action@v2.x
+        id: get_latest_model_version
+        with:
+          query: |
+            query {
+              repository(owner:"modelingcovid",name:"covidmodel") {
+                packages(last: 1, names:"mc19") {
+                  edges {
+                    node {  
+                      name
+                      latestVersion {
+                          version
+                      }
+                    }
+                  }
+                }
+              }
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update model version used by connector
+        id: update_version
+        run: |
+          CURRENT_VERSION=$(sed -e 's/^MC19_VERSION=\(.*\)/\1/g' .env) # TODO extract just the version
+          echo "The version of the model currently in use is $CURRENT_VERSION"
+
+          # Read the version retrieved by the GraphQL query.
+          LATEST_VERSION=${{ fromJSON(steps.get_latest_model_version.outputs.data).repository.packages.edges[0].node.latestVersion.version }}
+          echo "The latest published version of the model is $LATEST_VERSION"
+          echo "::set-output name=latest_version::$LATEST_VERSION"
+
+          # Update the model version used by the connector.
+          sed -i -e "s/$CURRENT_VERSION/$LATEST_VERSION/g" .env
+      
+      # This will only run if changes were detected.
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@4d3b0a4 # v2.8.1, pinned for security
+        with:
+          branch: bump/mc19
+          commit-message: "MC19 connector: Bump model version to ${{ steps.update_version.outputs.latest_version }}"
+          title: "MC19 connector: Bump model version"
+          body: This pull request was automatically created by GitHub Actions. It updates the MC19 connector to use the latest version of the model." 
+
