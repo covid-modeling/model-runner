@@ -56,7 +56,7 @@ export async function pullImage(
 export async function runContainer(
   client: Dockerode,
   image: string
-): Promise<void> {
+): Promise<number> {
   // Setup the log file.
   const logFile = path.join(LOG_DIR, 'runner.log')
   const logWriteStream = fs.createWriteStream(logFile, {
@@ -82,18 +82,13 @@ export async function runContainer(
       },
       {},
       (err, result) => {
-        // TODO: Consider using dockerClient.modem.followProgress(stream, onFinished, onProgress)
-        // or some equivalent for result
         if (err) return reject(err)
-        logger.info(result)
-        // const output = result[0]
-        // const container = result[1]
         logger.info('Model exited with status code: %d', result.StatusCode)
-        // resolve(container.remove())
+        // result[1].remove()
         if (result.Error) {
           reject(result.Error)
         } else {
-          resolve()
+          resolve(result.StatusCode)
         }
       }
     )

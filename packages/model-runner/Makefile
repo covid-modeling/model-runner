@@ -37,8 +37,8 @@ release:
 run-local: build
 	rm -rf input log output export.zip
 	mkdir -p log input output
-	cp test/test-job.json input/inputFile.json
-	./bin/run-model test/test-job.json
+	jq .configuration test/test-job-mrc-ide-covidsim.json > input/inputFile.json
+	./bin/run-model test/test-job-mrc-ide-covidsim.json
 
 .PHONY: run-remote
 run-remote:

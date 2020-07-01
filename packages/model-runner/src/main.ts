@@ -1,29 +1,31 @@
 import * as pino from 'pino'
 import * as path from 'path'
 import * as mkdirp from 'mkdirp'
-import { RunStatus, RequestInput } from '@covid-modeling/api'
+import { RequestInput, RunStatus } from '@covid-modeling/api'
 import { BlobStorage } from './blobstore'
 import { notifyUI } from './notify-ui'
 import { logger } from './logger'
 import {
+  AZURE_STORAGE_ACCOUNT,
+  AZURE_STORAGE_CONTAINER,
+  HOST_WORK_DIR,
+  INPUT_DIR,
   LOG_DIR,
   OUTPUT_DIR,
   RUNNER_SHARED_SECRET,
-  AZURE_STORAGE_ACCOUNT,
-  AZURE_STORAGE_CONTAINER,
-  INPUT_DIR,
-  HOST_WORK_DIR,
 } from './config'
 import * as Dockerode from 'dockerode'
 import * as fs from 'fs'
 import * as crypto from 'crypto'
 import { createExportZip } from './export'
 import * as docker from './docker'
-import { enforceRunnerInputSchema, enforceOutputSchema } from './schema'
+import { enforceOutputSchema, enforceRunnerInputSchema } from './schema'
+import { convertModelStatusCode, StatusCodes } from './status-codes'
 
 let inputID: string | number | null = null
 let callbackURL: string | null = null
 let modelSlug: string | null = null
+let statusCode: number = StatusCodes.Ok
 
 const handleRejection: NodeJS.UnhandledRejectionListener = err => {
   const finalLogger = pino.final(logger)
@@ -35,10 +37,10 @@ const handleRejection: NodeJS.UnhandledRejectionListener = err => {
       resultsLocation: '',
       exportLocation: '',
     }).finally(() => {
-      process.exit(1)
+      process.exit(StatusCodes.UnknownError)
     })
   } else {
-    process.exit(1)
+    process.exit(StatusCodes.UnknownError)
   }
 }
 
@@ -102,15 +104,28 @@ async function main() {
     logger.info(JSON.stringify(input.configuration))
 
     logger.info('Running container: %s', dockerImage)
-    await docker
-      .runContainer(dockerClient, dockerImage)
-      .then(data => {
-        // TODO: we seem to have lost the reference to the container
-        // logger.info('container %d removed', data)
+
+    statusCode = convertModelStatusCode(
+      await docker.runContainer(dockerClient, dockerImage).catch(err => {
+        logger.error(err)
+        return StatusCodes.DockerError
       })
-      .catch(err => logger.error(err))
+    )
 
     logger.info('Finished model run')
+
+    if (statusCode < 0) {
+      if (input.callbackURL) {
+        await notifyUI(input.callbackURL, RUNNER_SHARED_SECRET, input.id, {
+          modelSlug,
+          status: RunStatus.Failed,
+          resultsLocation: '',
+          exportLocation: '',
+          // TODO: Send back the status code or some other indicator of the type of failure.
+        })
+      }
+      process.exit(statusCode)
+    }
 
     logger.info('Creating export zip.')
     const exportZipFile = 'export.zip'
@@ -178,6 +193,7 @@ async function main() {
   } catch (err) {
     handleRejection(err, Promise.resolve())
   }
+  process.exit(statusCode)
 }
 
 function uniqueId(runInput: RequestInput, imageId: string): string {
@@ -199,7 +215,7 @@ Usage:
     `.trim()
   )
 
-  process.exit(1)
+  process.exit(StatusCodes.InvalidArguments)
 }
 
 main()
