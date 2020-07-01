@@ -2,6 +2,66 @@
   "$ref": "#/definitions/RequestInput",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
+    "Actual": {
+      "additionalProperties": false,
+      "properties": {
+        "cases": {
+          "type": "number"
+        },
+        "cumulativeCases": {
+          "type": "number"
+        },
+        "cumulativeDeaths": {
+          "type": "number"
+        },
+        "date": {
+          "$ref": "#/definitions/ISODate"
+        },
+        "deaths": {
+          "type": "number"
+        },
+        "mobility": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "date",
+        "cases",
+        "cumulativeCases",
+        "deaths",
+        "cumulativeDeaths"
+      ],
+      "type": "object"
+    },
+    "HistoricalData": {
+      "additionalProperties": false,
+      "properties": {
+        "actuals": {
+          "items": {
+            "$ref": "#/definitions/Actual"
+          },
+          "type": "array"
+        },
+        "endDate": {
+          "$ref": "#/definitions/ISODate"
+        },
+        "totalCases": {
+          "description": "The total number of confirmed cases in the region before the calibration date.",
+          "type": "number"
+        },
+        "totalDeaths": {
+          "description": "The total number of deaths in the region before the calibration date.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "endDate",
+        "totalCases",
+        "totalDeaths",
+        "actuals"
+      ],
+      "type": "object"
+    },
     "ISODate": {
       "type": "string"
     },
@@ -13,39 +73,67 @@
       ],
       "type": "string"
     },
+    "Intervention": {
+      "additionalProperties": false,
+      "properties": {
+        "intensity": {
+          "$ref": "#/definitions/Intensity"
+        },
+        "reductionPopulationContact": {
+          "type": "number"
+        },
+        "type": {
+          "$ref": "#/definitions/InterventionType"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
     "InterventionPeriod": {
       "additionalProperties": false,
       "properties": {
-        "caseIsolation": {
-          "$ref": "#/definitions/Intensity",
-          "description": "The level to which individuals with symptoms self-isolate."
+        "endDate": {
+          "$ref": "#/definitions/ISODate"
+        },
+        "inteventions": {
+          "items": {
+            "$ref": "#/definitions/Intervention"
+          },
+          "type": "array"
         },
         "reductionPopulationContact": {
           "description": "The estimated reduction in population contact resulting from\nall of the above interventions. Some models require this generalized\nparameter instead of the individual interventions.",
           "type": "number"
         },
-        "schoolClosure": {
-          "$ref": "#/definitions/Intensity",
-          "description": "The level of school closure in the region."
-        },
-        "socialDistancing": {
-          "$ref": "#/definitions/Intensity",
-          "description": "The level of social distancing in the region."
-        },
         "startDate": {
           "$ref": "#/definitions/ISODate",
           "description": "An ISO-8601 string encoding the date that these interventions begin."
-        },
-        "voluntaryHomeQuarantine": {
-          "$ref": "#/definitions/Intensity",
-          "description": "The level to which entire households self-isolate when one member\nof the household has symptoms."
         }
       },
       "required": [
         "startDate",
+        "endDate",
+        "inteventions",
         "reductionPopulationContact"
       ],
       "type": "object"
+    },
+    "InterventionType": {
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "type": "number"
     },
     "Model": {
       "additionalProperties": false,
@@ -86,17 +174,12 @@
     "ModelParameters": {
       "additionalProperties": false,
       "properties": {
-        "calibrationCaseCount": {
-          "description": "The total number of confirmed cases in the region before the calibration date.",
-          "type": "number"
+        "calibrationData": {
+          "$ref": "#/definitions/HistoricalData"
         },
         "calibrationDate": {
           "$ref": "#/definitions/ISODate",
           "description": "An ISO-8601 string encoding the date of the most recent case data in the region."
-        },
-        "calibrationDeathCount": {
-          "description": "The total number of deaths in the region before the calibration date.",
-          "type": "number"
         },
         "interventionPeriods": {
           "description": "A list of time periods, each with a different set of interventions.",
@@ -115,8 +198,7 @@
       },
       "required": [
         "calibrationDate",
-        "calibrationCaseCount",
-        "calibrationDeathCount",
+        "calibrationData",
         "r0",
         "interventionPeriods"
       ],
